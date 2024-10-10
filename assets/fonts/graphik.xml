@@ -1,0 +1,135 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<font-family xmlns:android="http://schemas.android.com/apk/res/android"
+             xmlns:app="http://schemas.android.com/apk/res-auto">
+
+  <!-- normal -->
+  
+  <font android:font="@font/graphik_thin_100"
+        android:fontStyle="normal"
+        android:fontWeight="100"
+        app:font="@font/graphik_thin_100"
+        app:fontStyle="normal"
+        app:fontWeight="100" />
+  
+  <font android:font="@font/graphik_extralight_200"
+        android:fontStyle="normal"
+        android:fontWeight="200"
+        app:font="@font/graphik_extralight_200"
+        app:fontStyle="normal"
+        app:fontWeight="200" />
+  
+  <font android:font="@font/graphik_light_300"
+        android:fontStyle="normal"
+        android:fontWeight="300"
+        app:font="@font/graphik_light_300"
+        app:fontStyle="normal"
+        app:fontWeight="300" />
+  
+  <font android:font="@font/graphik_regular_400"
+        android:fontStyle="normal"
+        android:fontWeight="400"
+        app:font="@font/graphik_regular_400"
+        app:fontStyle="normal"
+        app:fontWeight="400" />
+  
+  <font android:font="@font/graphik_medium_500"
+        android:fontStyle="normal"
+        android:fontWeight="500"
+        app:font="@font/graphik_medium_500"
+        app:fontStyle="normal"
+        app:fontWeight="500" />
+  
+  <font android:font="@font/graphik_semibold_600"
+        android:fontStyle="normal"
+        android:fontWeight="600"
+        app:font="@font/graphik_semibold_600"
+        app:fontStyle="normal"
+        app:fontWeight="600" />
+  
+  <font android:font="@font/graphik_bold_700"
+        android:fontStyle="normal"
+        android:fontWeight="700"
+        app:font="@font/graphik_bold_700"
+        app:fontStyle="normal"
+        app:fontWeight="700" />
+  
+  <font android:font="@font/graphik_black_800"
+        android:fontStyle="normal"
+        android:fontWeight="800"
+        app:font="@font/graphik_black_800"
+        app:fontStyle="normal"
+        app:fontWeight="800" />
+
+  <font android:font="@font/graphik_super_900"
+        android:fontStyle="normal"
+        android:fontWeight="900"
+        app:font="@font/graphik_super_900"
+        app:fontStyle="normal"
+        app:fontWeight="900" />
+
+  <!-- italic -->
+
+  <font android:font="@font/graphik_thinitalic_100"
+        android:fontStyle="italic"
+        android:fontWeight="100"
+        app:font="@font/graphik_thinitalic_100"
+        app:fontStyle="italic"
+        app:fontWeight="100" />
+
+  <font android:font="@font/graphik_extralightitalic_200"
+        android:fontStyle="italic"
+        android:fontWeight="200"
+        app:font="@font/graphik_extralightitalic_200"
+        app:fontStyle="italic"
+        app:fontWeight="200" />
+
+  <font android:font="@font/graphik_lightitalic_300"
+        android:fontStyle="italic"
+        android:fontWeight="300"
+        app:font="@font/graphik_lightitalic_300"
+        app:fontStyle="italic"
+        app:fontWeight="300" />
+
+  <font android:font="@font/graphik_regularitalic_400"
+        android:fontStyle="italic"
+        android:fontWeight="400"
+        app:font="@font/graphik_regularitalic_400"
+        app:fontStyle="italic"
+        app:fontWeight="400" />
+
+  <font android:font="@font/graphik_mediumitalic_500"
+        android:fontStyle="italic"
+        android:fontWeight="500"
+        app:font="@font/graphik_mediumitalic_500"
+        app:fontStyle="italic"
+        app:fontWeight="500" />
+
+  <font android:font="@font/graphik_semibolditalic_600"
+        android:fontStyle="italic"
+        android:fontWeight="600"
+        app:font="@font/graphik_semibolditalic_600"
+        app:fontStyle="italic"
+        app:fontWeight="600" />
+
+  <font android:font="@font/graphik_bolditalic_700"
+        android:fontStyle="italic"
+        android:fontWeight="700"
+        app:font="@font/graphik_bolditalic_700"
+        app:fontStyle="italic"
+        app:fontWeight="700" />
+
+  <font android:font="@font/graphik_blackitalic_800"
+        android:fontStyle="italic"
+        android:fontWeight="800"
+        app:font="@font/graphik_blackitalic_800"
+        app:fontStyle="italic"
+        app:fontWeight="800" />
+
+  <font android:font="@font/graphik_superitalic_900"
+        android:fontStyle="italic"
+        android:fontWeight="900"
+        app:font="@font/graphik_superitalic_900"
+        app:fontStyle="italic"
+        app:fontWeight="900" />
+  
+</font-family>
