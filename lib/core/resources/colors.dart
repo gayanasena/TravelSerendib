@@ -34,4 +34,7 @@ class ApplicationColors {
   Color get lightBlue => const Color(0xffCCDCEC);
 
   Color get shimmerBackground => const Color(0x93E9EFF6);
+  Color get appBackground => const Color(0xFFF5F5F5);
+  Color get appWhiteBackground => const Color(0xFFFFFFFF);
+  Color get shadowContainers => const Color(0xAA000000);
 }

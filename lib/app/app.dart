@@ -2,6 +2,7 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:travelapp/features/common/cubit/connectivity_cubit/connectivity_cubit.dart';
+import 'package:travelapp/features/home/presentation/cubit/cubit/location_cubit.dart';
 import 'package:travelapp/features/home/presentation/cubit/cubit/page_indicator_cubit.dart';
 
 import 'package:travelapp/routes/routes.dart' as router;
@@ -51,6 +52,9 @@ class _AppState extends State<App> with WidgetsBindingObserver {
         ),
         BlocProvider<PageIndicatorCubit>(
           create: (context) => PageIndicatorCubit(),
+        ),
+        BlocProvider<LocationCubit>(
+          create: (context) => LocationCubit(),
         ),
       ],
       child: const MaterialApp(

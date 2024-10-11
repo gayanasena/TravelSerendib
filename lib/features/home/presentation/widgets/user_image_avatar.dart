@@ -15,8 +15,8 @@ class UserImageAvatar extends StatelessWidget {
         children: [
           // Border Circle
           Container(
-            width: 68, // Adjust size as needed
-            height: 68,
+            width: 60, // Adjust size as needed
+            height: 60,
             decoration: const BoxDecoration(
               shape: BoxShape.circle,
               color: primaryColor,
@@ -25,7 +25,7 @@ class UserImageAvatar extends StatelessWidget {
 
           // Inner CircleAvatar
           CircleAvatar(
-            radius: 30, // Inner avatar size
+            radius: 26, // Inner avatar size
             backgroundImage: imageUrl.isNotEmpty
                 ? NetworkImage(imageUrl)
                 : AssetImage(Assets(context).icSampleUserImage),
