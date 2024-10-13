@@ -11,12 +11,15 @@ import 'package:travelapp/features/common/cubit/custom_loading/custom_loading_cu
 import 'package:travelapp/features/common/widgets/custom_loading.dart';
 import 'package:travelapp/features/home/data/model/carousel_model.dart';
 import 'package:travelapp/features/home/presentation/cubit/cubit/page_indicator_cubit.dart';
+import 'package:travelapp/features/home/presentation/pages/user_profile_view.dart';
 import 'package:travelapp/features/home/presentation/widgets/carousel_card.dart';
 import 'package:travelapp/features/home/presentation/widgets/category_grid.dart';
 import 'package:travelapp/features/home/presentation/widgets/service_grid.dart';
 import 'package:travelapp/features/home/presentation/widgets/title_text.dart';
 import 'package:travelapp/features/home/presentation/widgets/user_image_avatar.dart';
 import 'package:travelapp/features/home/presentation/widgets/wether_card.dart';
+import 'package:travelapp/routes/routes.dart';
+import 'package:travelapp/routes/routes_extension.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -36,23 +39,23 @@ class _HomeScreenState extends State<HomeScreen> {
   List<CarouselModel> carouselItemsModel = [
     CarouselModel(
         title: "Item 1",
-        imageUrl: "https://picsum.photos/200/300",
+        imageUrl: "https://picsum.photos/300/200",
         locationTitle: "Kandy"),
     CarouselModel(
         title: "Item 2",
-        imageUrl: "https://picsum.photos/200/300",
+        imageUrl: "https://picsum.photos/300/200",
         locationTitle: "Kandy"),
     CarouselModel(
         title: "Item 3",
-        imageUrl: "https://picsum.photos/200/300",
+        imageUrl: "https://picsum.photos/300/200",
         locationTitle: "Kandy"),
     CarouselModel(
         title: "Item 4",
-        imageUrl: "https://picsum.photos/200/300",
+        imageUrl: "https://picsum.photos/300/200",
         locationTitle: "Kandy"),
     CarouselModel(
         title: "Item 5",
-        imageUrl: "https://picsum.photos/200/300",
+        imageUrl: "https://picsum.photos/300/200",
         locationTitle: "Kandy")
   ];
 
@@ -77,76 +80,73 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener<ConnectivityCubit, ConnectivityState>(
-      listenWhen: (previous, current) => current != previous,
-      listener: (context, state) async {
-        if (state is ConnectivityInitial) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(
-                state.isConnected
-                    ? 'Internet connected.'
-                    : 'Internet disconnected.',
-                style: TextStyles(context).snackBarText,
-              ),
-              duration: const Duration(seconds: 1),
-              behavior: SnackBarBehavior.floating,
-              backgroundColor: primaryColor,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(15), // Curved edges
+    return Scaffold(
+      backgroundColor: ApplicationColors(context).appBackground,
+      body: Stack(
+        children: [
+          CustomScrollView(slivers: [
+            SliverAppBar(
+              pinned: false,
+              automaticallyImplyLeading: false,
+              backgroundColor: ApplicationColors(context).appWhiteBackground,
+              expandedHeight: 85,
+              flexibleSpace: FlexibleSpaceBar(
+                background: Padding(
+                  padding: const EdgeInsets.only(bottom: 8.0),
+                  child: Column(
+                    children: [
+                      SizedBox(
+                        height: context.mQTopSafeArea,
+                      ),
+                      Container(
+                        padding: const EdgeInsets.all(8.0),
+                        decoration: BoxDecoration(
+                          color: ApplicationColors(context).appWhiteBackground,
+                          borderRadius: const BorderRadius.only(
+                            bottomLeft: Radius.circular(25.0),
+                            bottomRight: Radius.circular(25.0),
+                          ),
+                          boxShadow: [
+                            BoxShadow(
+                              color: ApplicationColors(context)
+                                  .shadowContainers
+                                  .withOpacity(0.1),
+                              offset: const Offset(0, 4),
+                              blurRadius: 8.0,
+                              spreadRadius: 1.0,
+                            ),
+                          ],
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Flexible(
+                              child: Text(
+                                'Welcome $userName !',
+                                style:
+                                    TextStyles(context).homeScreenUserNameText,
+                              ),
+                            ),
+                            Wrap(children: [
+                              GestureDetector(
+                                  onTap: () {
+                                    showUserBottomSheet();
+                                  },
+                                  child:
+                                      UserImageAvatar(imageUrl: userImageUrl)),
+                            ]),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               ),
             ),
-          );
-          if (state.isConnected) {
-            //  Connected actions
-          }
-        }
-      },
-      child: Scaffold(
-        backgroundColor: ApplicationColors(context).appBackground,
-        body: Stack(
-          children: [
-            SingleChildScrollView(
+            SliverToBoxAdapter(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  SizedBox(
-                    height: context.mQTopSafeArea,
-                  ),
-                  Container(
-                    padding: const EdgeInsets.all(12.0),
-                    decoration: BoxDecoration(
-                      color: ApplicationColors(context).appWhiteBackground,
-                      borderRadius: const BorderRadius.only(
-                        bottomLeft: Radius.circular(20.0),
-                        bottomRight: Radius.circular(20.0),
-                      ),
-                      boxShadow: [
-                        BoxShadow(
-                          color: ApplicationColors(context)
-                              .shadowContainers
-                              .withOpacity(0.2),
-                          offset: const Offset(0, 4),
-                          blurRadius: 8.0,
-                          spreadRadius: 1.0,
-                        ),
-                      ],
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Flexible(
-                          child: Text(
-                            'Welcome $userName !',
-                            style: TextStyles(context).homeScreenUserNameText,
-                          ),
-                        ),
-                        Wrap(children: [
-                          UserImageAvatar(imageUrl: userImageUrl),
-                        ]),
-                      ],
-                    ),
-                  ),
                   const TitleText(titleText: "Upcoming Events"),
                   Padding(
                     padding: const EdgeInsetsDirectional.only(
@@ -215,23 +215,54 @@ class _HomeScreenState extends State<HomeScreen> {
                   SizedBox(
                     height: 400,
                     child: CategoryGrid(
-                      onCategoryTap: (category) {},
+                      onCategoryTap: (category) {
+                        context.toNamed(ScreenRoutes.toItemGridScreen,
+                            args: category);
+                      },
                     ),
                   ),
                   const TitleText(titleText: "Services"),
                   ServiceGrid()
                 ],
               ),
-            ),
-            BlocBuilder<CustomLoadingCubit, CustomLoadingInitial>(
-              bloc: customLoadingCubit,
-              builder: (context, state) {
-                return CustomLoading(isLoading: state.isLoading);
-              },
             )
-          ],
-        ),
+          ]),
+          BlocBuilder<CustomLoadingCubit, CustomLoadingInitial>(
+            bloc: customLoadingCubit,
+            builder: (context, state) {
+              return CustomLoading(isLoading: state.isLoading);
+            },
+          )
+        ],
       ),
+    );
+  }
+
+  void showUserBottomSheet() {
+    showModalBottomSheet(
+      clipBehavior: Clip.antiAlias,
+      context: context,
+      isDismissible: true,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(Dimens.defaultBottomSheetRadius),
+              topRight: Radius.circular(Dimens.defaultBottomSheetRadius))),
+      builder: (context) {
+        return Container(
+          constraints: BoxConstraints(
+            maxHeight: context.mQHeight * 0.8,
+          ),
+          child: Scaffold(
+            body: UserProfileScreen(
+              userName: "User",
+              userEmail: "User@gmail.com",
+              profileImageUrl: userImageUrl,
+              logout: () {},
+            ),
+          ),
+        );
+      },
     );
   }
 }

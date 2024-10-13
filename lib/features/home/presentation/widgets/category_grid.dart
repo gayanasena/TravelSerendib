@@ -18,6 +18,7 @@ class CategoryGrid extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GridView.builder(
+      physics: const NeverScrollableScrollPhysics(),
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2, // 2 columns
         crossAxisSpacing: 10.0,
@@ -32,6 +33,7 @@ class CategoryGrid extends StatelessWidget {
             if (kDebugMode) {
               print("Tapped on: ${items[index]['title']}");
             }
+            onCategoryTap("${items[index]['title']}");
           },
           child: Container(
             decoration: BoxDecoration(

@@ -36,5 +36,6 @@ class Dimens {
   static const defaultBorderRadius = 8.0;
   static const defaultCardPadding = 8.0;
   static const defaultControlBottom = 6.0;
+  static const defaultBottomSheetRadius = 24.0;
   static const circularProgressIndicatorSize = 15.0;
 }

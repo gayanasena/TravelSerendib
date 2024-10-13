@@ -9,7 +9,7 @@ class TextStyles {
   late TextStyle appBarText = TextStyle(
     fontFamily: 'graphik_medium_500',
     fontSize: 20,
-    color: ApplicationColors(context).black,
+    color: ApplicationColors(context).white,
   );
 
   late TextStyle snackBarText = TextStyle(
@@ -31,5 +31,26 @@ class TextStyles {
     color: ApplicationColors(context).black,
     fontSize: 20.0,
     fontWeight: FontWeight.w500,
+  );
+
+  late TextStyle buttonText = TextStyle(
+    fontFamily: 'graphik_regular_600',
+    color: ApplicationColors(context).white,
+    fontSize: 20.0,
+    fontWeight: FontWeight.w500,
+  );
+
+  late TextStyle detailViewCategory = TextStyle(
+    fontFamily: 'graphik_regular_500',
+    color: ApplicationColors(context).gray,
+    fontSize: 17.0,
+    fontWeight: FontWeight.w500,
+  );
+
+  late TextStyle detailViewDescriptionText = TextStyle(
+    fontFamily: 'graphik_regular_400',
+    color: ApplicationColors(context).black,
+    fontSize: 16.0,
+    fontWeight: FontWeight.w400,
   );
 }

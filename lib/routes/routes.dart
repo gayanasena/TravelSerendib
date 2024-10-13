@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:travelapp/features/home/data/model/grid_view_model.dart';
 import 'package:travelapp/features/home/presentation/pages/home_screen.dart';
+import 'package:travelapp/features/home/presentation/pages/item_detail_view.dart';
+import 'package:travelapp/features/home/presentation/pages/items_grid_view.dart';
 
 import '../features/auth/presentation/pages/login_screen.dart';
 import '../features/auth/presentation/pages/splash_screen.dart';
@@ -12,6 +15,10 @@ class ScreenRoutes {
   static const String toLoginScreen = 'toLoginScreen';
 
   static const String toHomeScreen = 'toHomeScreen';
+
+  static const String toItemGridScreen = 'toItemGridScreen';
+
+  static const String toItemDetailScreen = 'toItemDetailScreen';
 }
 
 class Router {
@@ -33,6 +40,22 @@ class Router {
 
       case ScreenRoutes.toHomeScreen:
         return MaterialPageRoute(builder: (_) => const HomeScreen());
+
+      case ScreenRoutes.toItemGridScreen:
+        var args =
+            settings.arguments != null ? settings.arguments as String : "";
+
+        return MaterialPageRoute(
+            builder: (_) => ItemGridView(gridViewType: args));
+
+      case ScreenRoutes.toItemDetailScreen:
+        var args = settings.arguments != null
+            ? settings.arguments as GridViewModel
+            : GridViewModel(
+                id: 0, title: "No data", description: "", imageUrl: "");
+
+        return MaterialPageRoute(
+            builder: (_) => ItemDetailPage(gridViewModel: args));
 
       default:
         return null;
