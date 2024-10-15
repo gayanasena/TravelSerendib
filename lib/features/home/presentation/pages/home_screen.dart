@@ -18,7 +18,7 @@ import 'package:travelapp/features/home/presentation/widgets/destination_card.da
 import 'package:travelapp/features/home/presentation/widgets/service_grid.dart';
 import 'package:travelapp/features/home/presentation/widgets/title_text.dart';
 import 'package:travelapp/features/home/presentation/widgets/user_image_avatar.dart';
-import 'package:travelapp/features/home/presentation/widgets/wether_card.dart';
+import 'package:travelapp/features/home/presentation/widgets/weather_card.dart';
 import 'package:travelapp/routes/routes.dart';
 import 'package:travelapp/routes/routes_extension.dart';
 
@@ -236,6 +236,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   ),
                   const TitleText(titleText: "Today’s Weather"),
+                  // const WeatherUpdateWidget(),
                   const WeatherUpdateWidget(),
                   const TitleText(titleText: "Populer destinations"),
                   Padding(

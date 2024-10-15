@@ -46,6 +46,7 @@ dependencies:
   translator: ^1.0.0
   table_calendar: ^3.1.2
   timeline_tile: ^2.0.0
+  weather: ^3.1.1
 
 dev_dependencies:
   flutter_test:
