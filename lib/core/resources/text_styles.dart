@@ -22,7 +22,7 @@ class TextStyles {
   late TextStyle homeScreenUserNameText = TextStyle(
     fontFamily: 'graphik_regular_400',
     color: ApplicationColors(context).black,
-    fontSize: 24.0,
+    fontSize: 16.0,
     fontWeight: FontWeight.w400,
   );
 
@@ -36,7 +36,14 @@ class TextStyles {
   late TextStyle buttonText = TextStyle(
     fontFamily: 'graphik_regular_600',
     color: ApplicationColors(context).white,
-    fontSize: 20.0,
+    fontSize: 18.0,
+    fontWeight: FontWeight.w500,
+  );
+
+  late TextStyle outlinedButtonText = const TextStyle(
+    fontFamily: 'graphik_regular_600',
+    color: primaryColor,
+    fontSize: 18.0,
     fontWeight: FontWeight.w500,
   );
 
@@ -52,5 +59,24 @@ class TextStyles {
     color: ApplicationColors(context).black,
     fontSize: 16.0,
     fontWeight: FontWeight.w400,
+  );
+
+  late TextStyle loginPageHeaderText = TextStyle(
+    fontFamily: 'DancingScript',
+    color: ApplicationColors(context).black,
+    fontSize: 42.0,
+  );
+
+  late TextStyle loginDescriptionText = TextStyle(
+    fontFamily: 'graphik_regular_400',
+    color: Colors.grey.shade800,
+    fontSize: 16.0,
+    fontWeight: FontWeight.w400,
+  );
+
+  late TextStyle homeHeaderTitle = TextStyle(
+    fontFamily: 'DancingScript',
+    color: ApplicationColors(context).black,
+    fontSize: 28.0,
   );
 }

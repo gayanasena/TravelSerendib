@@ -7,10 +7,13 @@ class Assets {
   Assets(this.context);
 
   //logos
-  String get incidentLoginLogo => '';
+  String get appLogo => 'assets/images/logo.png';
 
   // Common icons
   String get icSampleUserImage => 'assets/images/blank_user_image.png';
+
+  // images
+  String get loginBackground => "assets/images/beach_background_1.jpg";
 }
 
 class CustomIcons {

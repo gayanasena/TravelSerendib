@@ -14,6 +14,7 @@ import 'package:travelapp/features/home/presentation/cubit/cubit/page_indicator_
 import 'package:travelapp/features/home/presentation/pages/user_profile_view.dart';
 import 'package:travelapp/features/home/presentation/widgets/carousel_card.dart';
 import 'package:travelapp/features/home/presentation/widgets/category_grid.dart';
+import 'package:travelapp/features/home/presentation/widgets/destination_card.dart';
 import 'package:travelapp/features/home/presentation/widgets/service_grid.dart';
 import 'package:travelapp/features/home/presentation/widgets/title_text.dart';
 import 'package:travelapp/features/home/presentation/widgets/user_image_avatar.dart';
@@ -59,6 +60,34 @@ class _HomeScreenState extends State<HomeScreen> {
         locationTitle: "Kandy")
   ];
 
+  final List<CarouselModel> destinations = [
+    CarouselModel(
+        title: "Item 1",
+        imageUrl: "https://picsum.photos/300/200?random=1",
+        locationTitle: "Colombo",
+        rating: 4.0),
+    CarouselModel(
+        title: "Item 2",
+        imageUrl: "https://picsum.photos/300/200?random=2",
+        locationTitle: "Galle",
+        rating: 4.0),
+    CarouselModel(
+        title: "Item 3",
+        imageUrl: "https://picsum.photos/300/200?random=3",
+        locationTitle: "Jaffna",
+        rating: 4.0),
+    CarouselModel(
+        title: "Item 4",
+        imageUrl: "https://picsum.photos/300/300?random=4",
+        locationTitle: "Anuradhapura",
+        rating: 4.0),
+    CarouselModel(
+        title: "Item 5",
+        imageUrl: "https://picsum.photos/300/200?random=5",
+        locationTitle: "Kandy",
+        rating: 4.0),
+  ];
+
   void carouselOnTap() {
     if (kDebugMode) {
       print("Clicked");
@@ -92,14 +121,14 @@ class _HomeScreenState extends State<HomeScreen> {
               expandedHeight: 85,
               flexibleSpace: FlexibleSpaceBar(
                 background: Padding(
-                  padding: const EdgeInsets.only(bottom: 8.0),
+                  padding: const EdgeInsets.only(bottom: Dimens.defaultPadding),
                   child: Column(
                     children: [
                       SizedBox(
                         height: context.mQTopSafeArea,
                       ),
                       Container(
-                        padding: const EdgeInsets.all(8.0),
+                        padding: const EdgeInsets.all(Dimens.defaultPadding),
                         decoration: BoxDecoration(
                           color: ApplicationColors(context).appWhiteBackground,
                           borderRadius: const BorderRadius.only(
@@ -112,7 +141,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   .shadowContainers
                                   .withOpacity(0.1),
                               offset: const Offset(0, 4),
-                              blurRadius: 8.0,
+                              blurRadius: Dimens.defaultPadding,
                               spreadRadius: 1.0,
                             ),
                           ],
@@ -120,12 +149,9 @@ class _HomeScreenState extends State<HomeScreen> {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Flexible(
-                              child: Text(
-                                'Welcome $userName !',
-                                style:
-                                    TextStyles(context).homeScreenUserNameText,
-                              ),
+                            Text(
+                              'Travel Serendib',
+                              style: TextStyles(context).homeHeaderTitle,
                             ),
                             Wrap(children: [
                               GestureDetector(
@@ -211,18 +237,44 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   const TitleText(titleText: "Today’s Weather"),
                   const WeatherUpdateWidget(),
+                  const TitleText(titleText: "Populer destinations"),
+                  Padding(
+                    padding: const EdgeInsets.all(Dimens.defaultPadding),
+                    child: SizedBox(
+                      height: 200,
+                      child: ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: destinations.length,
+                        itemBuilder: (context, index) {
+                          final destination = destinations[index];
+                          return PopularDestinationCard(
+                            title: destination.title,
+                            location: destination.locationTitle,
+                            imageUrl: destination.imageUrl,
+                            rating: destination.rating ?? 0.0,
+                          );
+                        },
+                      ),
+                    ),
+                  ),
                   const TitleText(titleText: "Discover Your Next Adventure"),
                   SizedBox(
                     height: 400,
                     child: CategoryGrid(
                       onCategoryTap: (category) {
-                        context.toNamed(ScreenRoutes.toItemGridScreen,
-                            args: category);
+                        if (category == "Event Calendar") {
+                          context.toNamed(
+                            ScreenRoutes.toEventCalenderScreen,
+                          );
+                        } else {
+                          context.toNamed(ScreenRoutes.toItemGridScreen,
+                              args: category);
+                        }
                       },
                     ),
                   ),
                   const TitleText(titleText: "Services"),
-                  ServiceGrid()
+                  const ServiceGrid()
                 ],
               ),
             )

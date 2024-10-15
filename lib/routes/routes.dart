@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:travelapp/features/auth/presentation/pages/regsiter_screen.dart';
+import 'package:travelapp/features/auth/presentation/pages/welcome_screen.dart';
 import 'package:travelapp/features/home/data/model/grid_view_model.dart';
+import 'package:travelapp/features/home/presentation/pages/event_calander_view.dart';
 import 'package:travelapp/features/home/presentation/pages/home_screen.dart';
 import 'package:travelapp/features/home/presentation/pages/item_detail_view.dart';
 import 'package:travelapp/features/home/presentation/pages/items_grid_view.dart';
@@ -19,6 +22,12 @@ class ScreenRoutes {
   static const String toItemGridScreen = 'toItemGridScreen';
 
   static const String toItemDetailScreen = 'toItemDetailScreen';
+
+  static const String toWelcomeScreen = 'toWelcomeScreen';
+
+  static const String toRegisterScreen = 'toRegisterScreen';
+
+  static const String toEventCalenderScreen = 'toEventCalenderScreen';
 }
 
 class Router {
@@ -29,14 +38,14 @@ class Router {
       case ScreenRoutes.toSplashScreen:
         return MaterialPageRoute(builder: (_) => const SplashScreen());
 
-      case ScreenRoutes.toLoginScreen:
-        var args = settings.arguments != null ? settings.arguments as Map : {};
-        bool isForceLogout = args["isForceLogout"] ?? false;
+      case ScreenRoutes.toWelcomeScreen:
+        return MaterialPageRoute(builder: (_) => const WelcomeScreen());
 
-        return MaterialPageRoute(
-            builder: (_) => LoginScreen(
-                  isForceLogout: isForceLogout,
-                ));
+      case ScreenRoutes.toLoginScreen:
+        // var args = settings.arguments != null ? settings.arguments as Map : {};
+        // bool isForceLogout = args["isForceLogout"] ?? false;
+
+        return MaterialPageRoute(builder: (_) => const LoginScreen());
 
       case ScreenRoutes.toHomeScreen:
         return MaterialPageRoute(builder: (_) => const HomeScreen());
@@ -56,6 +65,12 @@ class Router {
 
         return MaterialPageRoute(
             builder: (_) => ItemDetailPage(gridViewModel: args));
+
+      case ScreenRoutes.toRegisterScreen:
+        return MaterialPageRoute(builder: (_) => const RegisterScreen());
+
+      case ScreenRoutes.toEventCalenderScreen:
+        return MaterialPageRoute(builder: (_) => const EventCalendarView());
 
       default:
         return null;

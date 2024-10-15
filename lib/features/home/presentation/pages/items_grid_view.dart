@@ -1,8 +1,9 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:travelapp/core/resources/colors.dart';
+import 'package:travelapp/core/resources/dimens.dart';
 import 'package:travelapp/core/resources/text_styles.dart';
 import 'package:travelapp/features/home/data/model/grid_view_model.dart';
+import 'package:travelapp/features/home/presentation/widgets/search_bar.dart';
 import 'package:travelapp/routes/routes.dart';
 import 'package:travelapp/routes/routes_extension.dart';
 
@@ -16,6 +17,7 @@ class ItemGridView extends StatefulWidget {
 }
 
 class ItemGridViewState extends State<ItemGridView> {
+  late TextEditingController searchBarTextEditingController;
   final List<GridViewModel> lisGridItem = [
     GridViewModel(
       id: 1,
@@ -44,6 +46,18 @@ class ItemGridViewState extends State<ItemGridView> {
   ];
 
   @override
+  void initState() {
+    super.initState();
+    searchBarTextEditingController = TextEditingController();
+  }
+
+  @override
+  void dispose() {
+    searchBarTextEditingController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -58,74 +72,86 @@ class ItemGridViewState extends State<ItemGridView> {
       body: Container(
         color: ApplicationColors(context).appBackground,
         child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: GridView.builder(
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 1,
-              childAspectRatio: 2,
-              mainAxisSpacing: 8,
-            ),
-            itemCount: lisGridItem.length,
-            itemBuilder: (context, index) {
-              final item = lisGridItem[index];
-              return Card(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12.0),
-                ),
-                color: Colors.white,
-                elevation: 4,
-                child: InkWell(
-                  onTap: () {
-                    if (kDebugMode) {
-                      print("Tapped on ${item.title}");
-                    }
-
-                    context.toNamed(ScreenRoutes.toItemDetailScreen,
-                        args: item);
-                  },
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      ClipRRect(
-                        borderRadius: const BorderRadius.only(
-                          topLeft: Radius.circular(12.0),
-                          topRight: Radius.circular(12.0),
-                        ),
-                        child: Image.network(
-                          item.imageUrl,
-                          height: 120,
-                          width: double.infinity,
-                          fit: BoxFit.cover,
-                        ),
+          padding: const EdgeInsets.all(Dimens.defaultPadding),
+          child: Column(
+            children: [
+              CustomSearchBar(
+                controller: searchBarTextEditingController,
+                onChanged: (searchString) {
+                  // Implement search functionality if needed
+                },
+              ),
+              const SizedBox(
+                height: 8.0,
+              ),
+              Expanded(
+                child: GridView.builder(
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 1,
+                    childAspectRatio: 2.0,
+                    mainAxisSpacing: 8,
+                    crossAxisSpacing: 8,
+                  ),
+                  itemCount: lisGridItem.length,
+                  itemBuilder: (context, index) {
+                    final item = lisGridItem[index];
+                    return Card(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12.0),
                       ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
+                      color: Colors.white,
+                      elevation: 4,
+                      child: InkWell(
+                        onTap: () {
+                          context.toNamed(ScreenRoutes.toItemDetailScreen,
+                              args: item);
+                        },
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(
-                              item.title,
-                              style: const TextStyle(
-                                fontSize: 17.0,
-                                fontWeight: FontWeight.bold,
+                            ClipRRect(
+                              borderRadius: const BorderRadius.only(
+                                topLeft: Radius.circular(12.0),
+                                topRight: Radius.circular(12.0),
+                              ),
+                              child: Image.network(
+                                item.imageUrl,
+                                height: 120,
+                                width: double.infinity,
+                                fit: BoxFit.cover,
                               ),
                             ),
-                            const SizedBox(height: 4.0),
-                            Text(
-                              item.description,
-                              style: TextStyle(
-                                fontSize: 15.0,
-                                color: Colors.grey.shade800,
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    item.title,
+                                    style: const TextStyle(
+                                      fontSize: 17.0,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 4.0),
+                                  Text(
+                                    item.description,
+                                    style: TextStyle(
+                                      fontSize: 15.0,
+                                      color: Colors.grey.shade800,
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
                           ],
                         ),
                       ),
-                    ],
-                  ),
+                    );
+                  },
                 ),
-              );
-            },
+              ),
+            ],
           ),
         ),
       ),

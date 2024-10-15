@@ -22,12 +22,7 @@ class LocationCubit extends Cubit<LocationState> {
           await locationRemoteServices.fetchWeatherByCurrentLocation(
               locationData.latitude!, locationData.longitude!);
       if (weatherData != null) {
-        Weather weather = Weather(
-            cityName: weatherData.cityName,
-            temperature: weatherData.temperature,
-            humidity: weatherData.humidity,
-            description: weatherData.description,
-            icon: 'https://openweathermap.org/img/w/${weatherData.icon}.png');
+        Weather weather = weatherData;
 
         emit(LocationSuccess(weather: weather));
       }

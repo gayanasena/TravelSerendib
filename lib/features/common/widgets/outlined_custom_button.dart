@@ -1,21 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:travelapp/core/resources/colors.dart';
+import 'package:travelapp/core/resources/text_styles.dart';
 
 class CustomOutlinedButton extends StatelessWidget {
   final String label;
   final VoidCallback onPressed;
   final bool isOutlined;
-  final Color backgroundColor;
-  final Color textColor;
-  final Color borderColor;
 
   const CustomOutlinedButton({
     super.key,
     required this.label,
     required this.onPressed,
     this.isOutlined = false,
-    this.backgroundColor = Colors.blueAccent,
-    this.textColor = Colors.white,
-    this.borderColor = Colors.blueAccent,
   });
 
   @override
@@ -26,36 +22,24 @@ class CustomOutlinedButton extends StatelessWidget {
           ? OutlinedButton(
               onPressed: onPressed,
               style: OutlinedButton.styleFrom(
-                side: BorderSide(color: borderColor),
+                side: const BorderSide(color: primaryColor),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(30.0),
                 ),
                 padding: const EdgeInsets.symmetric(vertical: 16.0),
               ),
-              child: Text(
-                label,
-                style: TextStyle(
-                  fontSize: 16.0,
-                  color: textColor,
-                ),
-              ),
+              child: Text(label, style: TextStyles(context).outlinedButtonText),
             )
           : ElevatedButton(
               onPressed: onPressed,
               style: ElevatedButton.styleFrom(
-                backgroundColor: backgroundColor,
+                backgroundColor: primaryColor,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(30.0),
                 ),
                 padding: const EdgeInsets.symmetric(vertical: 16.0),
               ),
-              child: Text(
-                label,
-                style: TextStyle(
-                  fontSize: 16.0,
-                  color: textColor,
-                ),
-              ),
+              child: Text(label, style: TextStyles(context).buttonText),
             ),
     );
   }

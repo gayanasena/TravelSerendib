@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 const MaterialColor primaryColor = MaterialColor(
-  0xFF003580,
+  0xFF007AFF, // 0xFF003580,
   <int, Color>{
     50: Color(0xff0050A0),
     100: Color(0xff0050A0),
@@ -37,4 +37,6 @@ class ApplicationColors {
   Color get appBackground => const Color(0xFFF5F5F5);
   Color get appWhiteBackground => const Color(0xFFFFFFFF);
   Color get shadowContainers => const Color(0xAA000000);
+  Color get whiteBackgroundTransparent =>
+      const Color.fromARGB(230, 255, 255, 255);
 }

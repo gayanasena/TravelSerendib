@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 class CategoryGrid extends StatelessWidget {
@@ -30,9 +29,6 @@ class CategoryGrid extends StatelessWidget {
       itemBuilder: (context, index) {
         return GestureDetector(
           onTap: () {
-            if (kDebugMode) {
-              print("Tapped on: ${items[index]['title']}");
-            }
             onCategoryTap("${items[index]['title']}");
           },
           child: Container(

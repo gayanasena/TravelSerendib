@@ -52,6 +52,9 @@ class _WeatherUpdateWidgetState extends State<WeatherUpdateWidget> {
               ),
             );
           } else if (state is LocationSuccess) {
+            double? tempdou = state.weather.main?.temp ?? 0;
+
+            int temp = tempdou.round();
             return Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -60,7 +63,7 @@ class _WeatherUpdateWidgetState extends State<WeatherUpdateWidget> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        state.weather.cityName,
+                        state.weather.name ?? "",
                         style: const TextStyle(
                           color: Colors.black,
                           fontWeight: FontWeight.bold,
@@ -68,14 +71,14 @@ class _WeatherUpdateWidgetState extends State<WeatherUpdateWidget> {
                         ),
                       ),
                       Text(
-                        '${state.weather.temperature.round()}°',
+                        '$temp°',
                         style: const TextStyle(
                           color: Colors.black,
                           fontSize: 24.0,
                         ),
                       ),
                       Text(
-                        state.weather.description,
+                        state.weather.weather.first?.description ?? "",
                         style: const TextStyle(
                           color: Colors.black,
                           fontSize: 14.0,
@@ -88,11 +91,11 @@ class _WeatherUpdateWidgetState extends State<WeatherUpdateWidget> {
                 Stack(
                   alignment: Alignment.center,
                   children: [
-                    if (state.weather.icon.isEmpty)
+                    if (state.weather.weather.first!.icon!.isEmpty)
                       const CircularProgressIndicator(),
-                    if (state.weather.icon.isNotEmpty)
+                    if (state.weather.weather.first!.icon!.isNotEmpty)
                       Image.network(
-                        state.weather.icon,
+                        'https://openweathermap.org/img/w/${state.weather.weather.first!.icon}.png',
                         width: 80.0,
                         height: 80.0,
                         fit: BoxFit.cover,
