@@ -1,4 +1,8 @@
+// ignore_for_file: use_build_context_synchronously
+
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:travelapp/core/resources/colors.dart';
 import 'package:travelapp/core/resources/text_styles.dart';
 import 'package:travelapp/features/common/widgets/outlined_custom_button.dart';
@@ -7,8 +11,25 @@ import 'package:travelapp/routes/routes.dart';
 import 'package:travelapp/routes/routes_extension.dart';
 import 'package:travelapp/utils/assets.dart';
 
-class LoginScreen extends StatelessWidget {
+class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
+
+  @override
+  State<LoginScreen> createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<LoginScreen> {
+  late TextEditingController emailFieldController;
+  late TextEditingController passwordFieldController;
+  late FlutterSecureStorage secureStorage;
+
+  @override
+  void initState() {
+    emailFieldController = TextEditingController();
+    passwordFieldController = TextEditingController();
+    secureStorage = const FlutterSecureStorage();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +52,8 @@ class LoginScreen extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Card(
-                    color: ApplicationColors(context).whiteBackgroundTransparent,
+                    color:
+                        ApplicationColors(context).whiteBackgroundTransparent,
                     elevation: 8,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
@@ -50,17 +72,51 @@ class LoginScreen extends StatelessWidget {
                             style: TextStyles(context).loginDescriptionText,
                           ),
                           const SizedBox(height: 20),
-                          const OutlinedTextBox(labelText: "Email"),
+                          OutlinedTextBox(
+                            labelText: "Email",
+                            controller: emailFieldController,
+                          ),
                           const SizedBox(height: 10),
-                          const OutlinedTextBox(
+                          OutlinedTextBox(
+                            controller: passwordFieldController,
                             labelText: "Password",
                             isPassword: true,
                           ),
                           const SizedBox(height: 20),
                           CustomOutlinedButton(
                             label: 'Sign in',
-                            onPressed: () {
-                              onLoginClick();
+                            onPressed: () async {
+                              String txtEmail = emailFieldController.text;
+                              String txtPassword = passwordFieldController.text;
+                              if (txtPassword.isNotEmpty &&
+                                  txtEmail.isNotEmpty) {
+                                String message = await onLoginClick(
+                                    emailAddress: txtEmail,
+                                    password: txtPassword);
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text(
+                                      message,
+                                      style: TextStyles(context).snackBarText,
+                                    ),
+                                    duration: const Duration(seconds: 1),
+                                    behavior: SnackBarBehavior.floating,
+                                    backgroundColor: primaryColor,
+                                  ),
+                                );
+                              } else {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text(
+                                      'Invalid credentials. Please check your username and password and try again',
+                                      style: TextStyles(context).snackBarText,
+                                    ),
+                                    duration: const Duration(seconds: 1),
+                                    behavior: SnackBarBehavior.floating,
+                                    backgroundColor: primaryColor,
+                                  ),
+                                );
+                              }
                             },
                             isOutlined: false,
                           ),
@@ -85,5 +141,28 @@ class LoginScreen extends StatelessWidget {
     );
   }
 
-  void onLoginClick() {}
+  Future<String> onLoginClick(
+      {required String emailAddress, required String password}) async {
+    String message = "";
+    try {
+      await FirebaseAuth.instance
+          .signInWithEmailAndPassword(email: emailAddress, password: password);
+      message = "Login successful!";
+      if (message.isNotEmpty) {
+        context.pushReplacementNamed(ScreenRoutes.toHomeScreen);
+        // Turn off guest mode
+        secureStorage.write(key: "isGuestMode",value: 'false');
+      }
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'user-not-found') {
+        message = 'No user found for that email.';
+      } else if (e.code == 'wrong-password') {
+        message = 'Wrong password provided for that user.';
+      } else {
+        message = e.message ?? "invalid credentials";
+      }
+    }
+
+    return message;
+  }
 }

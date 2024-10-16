@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:travelapp/core/resources/colors.dart';
 import 'package:travelapp/core/resources/text_styles.dart';
 import 'package:travelapp/features/common/widgets/outlined_custom_button.dart';
-import 'package:travelapp/features/common/widgets/outlined_text_box.dart';
 import 'package:travelapp/utils/assets.dart';
 
 class RegisterScreen extends StatelessWidget {
@@ -45,18 +44,18 @@ class RegisterScreen extends StatelessWidget {
                         style: TextStyles(context).loginDescriptionText,
                       ),
                       const SizedBox(height: 20),
-                      const OutlinedTextBox(labelText: "First Name"),
-                      const SizedBox(height: 10),
-                      const OutlinedTextBox(labelText: "Last Name"),
-                      const SizedBox(height: 10),
-                      const OutlinedTextBox(labelText: "Your Country"),
-                      const SizedBox(height: 10),
-                      const OutlinedTextBox(labelText: "Email"),
-                      const SizedBox(height: 10),
-                      const OutlinedTextBox(
-                        labelText: "Password",
-                        isPassword: true,
-                      ),
+                      // const OutlinedTextBox(labelText: "First Name"),
+                      // const SizedBox(height: 10),
+                      // const OutlinedTextBox(labelText: "Last Name"),
+                      // const SizedBox(height: 10),
+                      // const OutlinedTextBox(labelText: "Your Country"),
+                      // const SizedBox(height: 10),
+                      // const OutlinedTextBox(labelText: "Email"),
+                      // const SizedBox(height: 10),
+                      // const OutlinedTextBox(
+                      //   labelText: "Password",
+                      //   isPassword: true,
+                      // ),
                       const SizedBox(height: 20),
                       CustomOutlinedButton(
                         label: 'Sign Up',

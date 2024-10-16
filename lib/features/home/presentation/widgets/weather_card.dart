@@ -126,7 +126,6 @@ class _WeatherUpdateWidgetState extends State<WeatherUpdateWidget> {
       ),
       child: Column(
         children: [
-          const SizedBox(height: 20),
           weatherContent(),
         ],
       ),

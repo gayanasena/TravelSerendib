@@ -1,6 +1,9 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:travelapp/core/resources/colors.dart';
 import 'package:travelapp/core/resources/text_styles.dart';
+import 'package:travelapp/routes/routes.dart';
+import 'package:travelapp/routes/routes_extension.dart';
 
 class UserProfileScreen extends StatelessWidget {
   final String userName;
@@ -78,8 +81,29 @@ class UserProfileScreen extends StatelessWidget {
                     borderRadius: BorderRadius.circular(15.0),
                   ),
                 ),
-                onPressed: () {
-                  // Handle logout logic here
+                onPressed: () async {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(
+                        'Are you sure you want to log out?',
+                        style: TextStyles(context).snackBarText,
+                      ),
+                      duration: const Duration(seconds: 3),
+                      behavior: SnackBarBehavior.floating,
+                      backgroundColor: primaryColor,
+                      action: SnackBarAction(
+                        label: 'Yes',
+                        textColor: Colors
+                            .white, 
+                        onPressed: () async {
+                          await FirebaseAuth.instance.signOut().then((onValue) {
+                            context.pushReplacementNamed(
+                                ScreenRoutes.toWelcomeScreen);
+                          });
+                        },
+                      ),
+                    ),
+                  );
                 },
                 child: Text(
                   'Logout',

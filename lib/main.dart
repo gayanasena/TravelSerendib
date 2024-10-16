@@ -1,15 +1,21 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:travelapp/app/app.dart';
 import 'package:travelapp/firebase_options.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await configureDependencies();
+  await configureSecureStorage();
 
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
   runApp(const App());
 }
 
-configureDependencies() {}
+configureSecureStorage() async {
+  FlutterSecureStorage secureStorage = const FlutterSecureStorage();
+  if(! await secureStorage.containsKey(key: "isGuestMode")){
+    await secureStorage.write(key: 'isGuestMode', value: 'true');
+  }
+}
