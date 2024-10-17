@@ -2,6 +2,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:travelapp/core/resources/colors.dart';
 import 'package:travelapp/core/resources/dimens.dart';
@@ -30,6 +31,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  late FlutterSecureStorage secureStorage;
   late CustomLoadingCubit customLoadingCubit;
   String userName = "User";
   final String userImageUrl = 'https://picsum.photos/200/300';
@@ -98,6 +100,7 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     context.read<ConnectivityCubit>();
     customLoadingCubit = CustomLoadingCubit();
+    secureStorage = const FlutterSecureStorage();
     super.initState();
   }
 
@@ -306,13 +309,8 @@ class _HomeScreenState extends State<HomeScreen> {
           constraints: BoxConstraints(
             maxHeight: context.mQHeight * 0.8,
           ),
-          child: Scaffold(
-            body: UserProfileScreen(
-              userName: "User",
-              userEmail: "User@gmail.com",
-              profileImageUrl: userImageUrl,
-              logout: () {},
-            ),
+          child: const Scaffold(
+            body: UserProfileScreen(),
           ),
         );
       },

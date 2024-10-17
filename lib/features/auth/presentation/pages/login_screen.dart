@@ -1,5 +1,3 @@
-// ignore_for_file: use_build_context_synchronously
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -7,6 +5,7 @@ import 'package:travelapp/core/resources/colors.dart';
 import 'package:travelapp/core/resources/text_styles.dart';
 import 'package:travelapp/features/common/widgets/outlined_custom_button.dart';
 import 'package:travelapp/features/common/widgets/outlined_text_box.dart';
+import 'package:travelapp/features/home/data/Services/firebase_services.dart';
 import 'package:travelapp/routes/routes.dart';
 import 'package:travelapp/routes/routes_extension.dart';
 import 'package:travelapp/utils/assets.dart';
@@ -19,12 +18,14 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+  late FirebaseServices firebaseServices;
   late TextEditingController emailFieldController;
   late TextEditingController passwordFieldController;
   late FlutterSecureStorage secureStorage;
 
   @override
   void initState() {
+    firebaseServices = FirebaseServices();
     emailFieldController = TextEditingController();
     passwordFieldController = TextEditingController();
     secureStorage = const FlutterSecureStorage();
@@ -145,13 +146,18 @@ class _LoginScreenState extends State<LoginScreen> {
       {required String emailAddress, required String password}) async {
     String message = "";
     try {
-      await FirebaseAuth.instance
+      final credintials = await FirebaseAuth.instance
           .signInWithEmailAndPassword(email: emailAddress, password: password);
       message = "Login successful!";
+
       if (message.isNotEmpty) {
+        // save detail model in secure storage.
+        firebaseServices.setUserData();
+
         context.pushReplacementNamed(ScreenRoutes.toHomeScreen);
         // Turn off guest mode
-        secureStorage.write(key: "isGuestMode",value: 'false');
+        secureStorage.write(key: "isGuestMode", value: 'false');
+        secureStorage.write(key: "isLoggedIn", value: 'true');
       }
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {

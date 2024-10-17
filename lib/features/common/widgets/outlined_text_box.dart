@@ -6,13 +6,16 @@ class OutlinedTextBox extends StatefulWidget {
   final String labelText;
   final bool isPassword;
   final TextEditingController controller;
+  final String? Function(String?)? validator;
 
-  const OutlinedTextBox(
-      {super.key,
-      this.color = primaryColor,
-      required this.labelText,
-      this.isPassword = false,
-      required this.controller});
+  const OutlinedTextBox({
+    super.key,
+    this.color = primaryColor,
+    required this.labelText,
+    this.isPassword = false,
+    required this.controller,
+    this.validator,
+  });
 
   @override
   State<OutlinedTextBox> createState() => _OutlinedTextBoxState();
@@ -23,9 +26,10 @@ class _OutlinedTextBoxState extends State<OutlinedTextBox> {
 
   @override
   Widget build(BuildContext context) {
-    return TextField(
+    return TextFormField(
       controller: widget.controller,
       obscureText: widget.isPassword ? _obscureText : false,
+      validator: widget.validator,
       decoration: InputDecoration(
         labelText: widget.labelText,
         labelStyle: const TextStyle(color: Colors.black),

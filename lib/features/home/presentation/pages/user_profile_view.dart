@@ -1,22 +1,58 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:travelapp/core/resources/colors.dart';
 import 'package:travelapp/core/resources/text_styles.dart';
 import 'package:travelapp/routes/routes.dart';
 import 'package:travelapp/routes/routes_extension.dart';
 
-class UserProfileScreen extends StatelessWidget {
-  final String userName;
-  final String userEmail;
-  final String profileImageUrl;
-  final VoidCallback logout;
+class UserProfileScreen extends StatefulWidget {
+  const UserProfileScreen({
+    super.key,
+  });
 
-  const UserProfileScreen(
-      {super.key,
-      required this.userName,
-      required this.userEmail,
-      required this.profileImageUrl,
-      required this.logout});
+  @override
+  State<UserProfileScreen> createState() => _UserProfileScreenState();
+}
+
+class _UserProfileScreenState extends State<UserProfileScreen> {
+  late FlutterSecureStorage secureStorage;
+  late bool isLoggedIn = false;
+  late String profileImageUrl = "";
+  late String userName = " ";
+  late String userEmail = "";
+
+  @override
+  void initState() {
+    secureStorage = const FlutterSecureStorage();
+
+    super.initState();
+  }
+
+  void setSecureStorageData() async {
+    final username = await secureStorage.read(key: 'username') ?? '';
+    final email = await secureStorage.read(key: 'userEmail') ?? '';
+    final imageUrl = await secureStorage.read(key: 'userImageUrl') ?? '';
+
+    // Update state only if necessary
+    setState(() {
+      userName = username;
+      userEmail = email;
+      profileImageUrl = imageUrl;
+    });
+  }
+
+  void getSecureStorageData() async {
+    if (await secureStorage.read(key: "isLoggedIn") == 'true') {
+      setState(() {
+        isLoggedIn = true;
+      });
+    } else {
+      setState(() {
+        isLoggedIn = false;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +71,7 @@ class UserProfileScreen extends StatelessWidget {
         children: [
           const SizedBox(height: 16.0),
           Center(
-            child: ClipRRect(
+            child:profileImageUrl.isNotEmpty ? ClipRRect(
               borderRadius: BorderRadius.circular(50.0),
               child: Image.network(
                 profileImageUrl,
@@ -43,7 +79,7 @@ class UserProfileScreen extends StatelessWidget {
                 height: 100,
                 fit: BoxFit.cover,
               ),
-            ),
+            ) : Container(),
           ),
           const SizedBox(height: 16.0),
           Text(
@@ -82,31 +118,39 @@ class UserProfileScreen extends StatelessWidget {
                   ),
                 ),
                 onPressed: () async {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text(
-                        'Are you sure you want to log out?',
-                        style: TextStyles(context).snackBarText,
+                  if (isLoggedIn) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text(
+                          'Are you sure you want to log out?',
+                          style: TextStyles(context).snackBarText,
+                        ),
+                        duration: const Duration(seconds: 3),
+                        behavior: SnackBarBehavior.floating,
+                        backgroundColor: primaryColor,
+                        action: SnackBarAction(
+                          label: 'Yes',
+                          textColor: Colors.white,
+                          onPressed: () async {
+                            await FirebaseAuth.instance
+                                .signOut()
+                                .then((onValue) {
+                              context.pushReplacementNamed(
+                                  ScreenRoutes.toWelcomeScreen);
+
+                              secureStorage.write(
+                                  key: "isLoggedIn", value: 'false');
+                            });
+                          },
+                        ),
                       ),
-                      duration: const Duration(seconds: 3),
-                      behavior: SnackBarBehavior.floating,
-                      backgroundColor: primaryColor,
-                      action: SnackBarAction(
-                        label: 'Yes',
-                        textColor: Colors
-                            .white, 
-                        onPressed: () async {
-                          await FirebaseAuth.instance.signOut().then((onValue) {
-                            context.pushReplacementNamed(
-                                ScreenRoutes.toWelcomeScreen);
-                          });
-                        },
-                      ),
-                    ),
-                  );
+                    );
+                  } else {
+                    context.pushReplacementNamed(ScreenRoutes.toLoginScreen);
+                  }
                 },
                 child: Text(
-                  'Logout',
+                  isLoggedIn ? 'Logout' : 'Login',
                   style: TextStyles(context).buttonText,
                 ),
               ),
