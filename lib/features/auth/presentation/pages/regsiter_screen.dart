@@ -22,6 +22,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   late TextEditingController emailTextEditingController;
   late TextEditingController passwordTextEditingController;
   late TextEditingController countryTextEditingController;
+  String uid = "";
 
   final _formKey = GlobalKey<FormState>();
 
@@ -133,14 +134,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                   passwordTextEditingController.text;
                               onSignUpClick(
                                   emailAddress: email, password: password);
-                              saveUserData(
-                                  firstName:
-                                      firstNameTextEditingController.text,
-                                  lastName: lastNameTextEditingController.text,
-                                  email: emailTextEditingController.text,
-                                  country: countryTextEditingController.text,
-                                  imageUrl:
-                                      'https://picsum.photos/300/200?random=5');
                             }
                           },
                           isOutlined: false,
@@ -170,10 +163,21 @@ class _RegisterScreenState extends State<RegisterScreen> {
     bool isSuccess = false;
 
     try {
-      await FirebaseAuth.instance.createUserWithEmailAndPassword(
+      final cred = await FirebaseAuth.instance.createUserWithEmailAndPassword(
         email: emailAddress,
         password: password,
       );
+
+      if (cred.user != null) {
+        uid = cred.user?.uid ?? "";
+        saveUserData(
+            firstName: firstNameTextEditingController.text,
+            lastName: lastNameTextEditingController.text,
+            email: emailTextEditingController.text,
+            country: countryTextEditingController.text,
+            imageUrl: 'https://picsum.photos/300/200?random=5');
+      }
+
       message = "Welcome! Your account has been successfully created.";
       isSuccess = true;
     } on FirebaseAuthException catch (e) {
@@ -212,8 +216,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
     required String country,
     required String imageUrl,
   }) async {
-    String uid = firebaseServices.getUserId();
-
     await firebaseServices.saveUserData(UserModel(
         uid: uid,
         firstName: firstName,

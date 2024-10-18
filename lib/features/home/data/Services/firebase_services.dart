@@ -75,7 +75,11 @@ class FirebaseServices {
           FirebaseDatabase.instance.ref('users/${user.uid}');
 
       // Save user data as a map using the toMap method in UserModel
-      await usersRef.set(user.toMap());
+      await usersRef.set(user.toMap()).then((_) {
+        print('User data saved successfully');
+      }).catchError((error) {
+        print('User data saved faild, ${error.toString()}');
+      });
       print('User data saved successfully');
     } catch (error) {
       print('Failed to save user data: $error');

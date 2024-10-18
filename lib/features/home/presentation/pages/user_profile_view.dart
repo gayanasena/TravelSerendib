@@ -25,11 +25,12 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
   @override
   void initState() {
     secureStorage = const FlutterSecureStorage();
-
+    getLoggedInStatusData();
+    setCurrentUserData();
     super.initState();
   }
 
-  void setSecureStorageData() async {
+  void setCurrentUserData() async {
     final username = await secureStorage.read(key: 'username') ?? '';
     final email = await secureStorage.read(key: 'userEmail') ?? '';
     final imageUrl = await secureStorage.read(key: 'userImageUrl') ?? '';
@@ -42,7 +43,7 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
     });
   }
 
-  void getSecureStorageData() async {
+  void getLoggedInStatusData() async {
     if (await secureStorage.read(key: "isLoggedIn") == 'true') {
       setState(() {
         isLoggedIn = true;
@@ -71,15 +72,17 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
         children: [
           const SizedBox(height: 16.0),
           Center(
-            child:profileImageUrl.isNotEmpty ? ClipRRect(
-              borderRadius: BorderRadius.circular(50.0),
-              child: Image.network(
-                profileImageUrl,
-                width: 100,
-                height: 100,
-                fit: BoxFit.cover,
-              ),
-            ) : Container(),
+            child: profileImageUrl.isNotEmpty
+                ? ClipRRect(
+                    borderRadius: BorderRadius.circular(50.0),
+                    child: Image.network(
+                      profileImageUrl,
+                      width: 100,
+                      height: 100,
+                      fit: BoxFit.cover,
+                    ),
+                  )
+                : Container(),
           ),
           const SizedBox(height: 16.0),
           Text(
