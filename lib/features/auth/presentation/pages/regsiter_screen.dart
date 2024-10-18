@@ -171,11 +171,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
       if (cred.user != null) {
         uid = cred.user?.uid ?? "";
         saveUserData(
+            uid: uid,
             firstName: firstNameTextEditingController.text,
             lastName: lastNameTextEditingController.text,
             email: emailTextEditingController.text,
             country: countryTextEditingController.text,
-            imageUrl: 'https://picsum.photos/300/200?random=5');
+            imageUrl: 'https://picsum.photos/300/200?random=5'); //TODO: change to set user image.
       }
 
       message = "Welcome! Your account has been successfully created.";
@@ -210,6 +211,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   }
 
   void saveUserData({
+    required String uid,
     required String firstName,
     required String lastName,
     required String email,
