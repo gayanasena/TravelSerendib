@@ -168,6 +168,7 @@ class ItemDetailPageState extends State<ItemDetailPage> {
                     onRatingUpdate: (rating) {
                       setState(() {
                         this.rating = rating;
+                        // Note - Still not updating in firebase
                       });
                     },
                   ),

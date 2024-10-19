@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:travelapp/features/auth/presentation/pages/regsiter_screen.dart';
+import 'package:travelapp/features/auth/presentation/pages/register_screen.dart';
 import 'package:travelapp/features/auth/presentation/pages/welcome_screen.dart';
 import 'package:travelapp/features/home/data/model/detail_model.dart';
 import 'package:travelapp/features/home/presentation/pages/event_calander_view.dart';
