@@ -180,7 +180,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 'https://picsum.photos/300/200?random=5'); //TODO: change to set user image.
       }
 
-      message = "Welcome! Your account has been successfully created.";
+      message = "Welcome! Your account has been successfully created. Please login";
       isSuccess = true;
     } on FirebaseAuthException catch (e) {
       if (e.code == 'weak-password') {
