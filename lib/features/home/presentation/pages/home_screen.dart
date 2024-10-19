@@ -1,5 +1,4 @@
 import 'package:carousel_slider/carousel_slider.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -108,12 +107,6 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
-  void carouselOnTap() {
-    if (kDebugMode) {
-      print("Clicked");
-    }
-  }
-
   void setCurrentUserData() async {
     final imageUrl = await secureStorage.read(key: 'userImageUrl') ?? '';
 
@@ -194,7 +187,9 @@ class _HomeScreenState extends State<HomeScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const TitleText(titleText: "Upcoming Events"),
+                  (lisUpComingEvents.isNotEmpty)
+                      ? const TitleText(titleText: "Upcoming Events")
+                      : Container(),
                   (lisUpComingEvents.isNotEmpty)
                       ? Padding(
                           padding: const EdgeInsetsDirectional.only(
@@ -219,7 +214,11 @@ class _HomeScreenState extends State<HomeScreen> {
                               return Builder(
                                 builder: (BuildContext context) {
                                   return GestureDetector(
-                                    onTap: carouselOnTap,
+                                    onTap: () {
+                                      context.toNamed(
+                                          ScreenRoutes.toItemDetailScreen,
+                                          args: item);
+                                    },
                                     child: CarouselCard(
                                       imageUrl: item.imageUrls.first,
                                       text: item.title,
