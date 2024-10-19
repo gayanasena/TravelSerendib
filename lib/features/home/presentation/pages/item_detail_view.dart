@@ -8,6 +8,7 @@ import 'package:travelapp/features/home/data/model/detail_model.dart';
 import 'package:travelapp/features/home/presentation/widgets/detail_carousel_card.dart';
 import 'package:travelapp/features/home/presentation/widgets/google_maps_view.dart';
 import 'package:travelapp/features/home/presentation/widgets/title_text.dart';
+import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
 class ItemDetailPage extends StatefulWidget {
   final DetailModel detailModel;
@@ -24,6 +25,19 @@ class ItemDetailPage extends StatefulWidget {
 class ItemDetailPageState extends State<ItemDetailPage> {
   bool isFavorite = false;
   double rating = 0.0;
+  late YoutubePlayerController _controllerVideoPlayer;
+
+  @override
+  void initState() {
+    _controllerVideoPlayer = YoutubePlayerController(
+      initialVideoId: widget.detailModel.videoUrl ?? '',
+      flags: const YoutubePlayerFlags(
+        autoPlay: true,
+        mute: true,
+      ),
+    );
+    super.initState();
+  }
 
   void toggleFavorite() {
     setState(() {
@@ -180,8 +194,34 @@ class ItemDetailPageState extends State<ItemDetailPage> {
                 style: TextStyles(context).detailViewDescriptionText,
               ),
             ),
-
+            // Video player
             const SizedBox(height: 16),
+            (widget.detailModel.videoUrl != null)
+                ? const Padding(
+                    padding: EdgeInsets.only(left: 8.0, bottom: 8.0),
+                    child: TitleText(titleText: "Video"),
+                  )
+                : Container(),
+            (widget.detailModel.videoUrl != null)
+                ? Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                    child: YoutubePlayer(
+                      controller: _controllerVideoPlayer,
+                      showVideoProgressIndicator: true,
+                      progressIndicatorColor: Colors.amber,
+                      progressColors: const ProgressBarColors(
+                        playedColor: Colors.amber,
+                        handleColor: Colors.amberAccent,
+                      ),
+                      onReady: () {
+                        // _controllerVideoPlayer.addListener();
+                      },
+                    ),
+                  )
+                : Container(),
+            (widget.detailModel.videoUrl != null)
+                ? const SizedBox(height: 16)
+                : Container(),
 
             // Suggestions Section
             const Padding(
