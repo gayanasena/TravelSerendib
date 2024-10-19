@@ -41,8 +41,8 @@ class ItemDetailPageState extends State<ItemDetailPage> {
         title: Text(
           widget.detailModel.title,
           style: TextStyles(context).appBarText,
-          maxLines: 2, // Allows title to wrap into two lines.
-          overflow: TextOverflow.ellipsis, // Prevents overflow in the app bar.
+          maxLines: 2,
+          overflow: TextOverflow.ellipsis,
         ),
         iconTheme: const IconThemeData(color: Colors.white),
         actions: [
@@ -61,7 +61,8 @@ class ItemDetailPageState extends State<ItemDetailPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const SizedBox(height: 12),
-            // Image section
+
+            // Image Carousel
             CarouselSlider(
               options: CarouselOptions(
                 height: 250,
@@ -71,7 +72,6 @@ class ItemDetailPageState extends State<ItemDetailPage> {
                 autoPlayCurve: Curves.easeInOut,
                 enlargeCenterPage: false,
                 viewportFraction: 0.9,
-                onPageChanged: (index, reason) {},
               ),
               items: widget.detailModel.imageUrls.map((imageUrl) {
                 return Builder(
@@ -83,14 +83,15 @@ class ItemDetailPageState extends State<ItemDetailPage> {
                 );
               }).toList(),
             ),
+
             const SizedBox(height: 16),
-            // Title and rating section
+
+            // Title and Rating Section
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Wrap title in Expanded to allow flexible space
                   Expanded(
                     child: Text(
                       widget.detailModel.title,
@@ -98,13 +99,11 @@ class ItemDetailPageState extends State<ItemDetailPage> {
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
                       ),
-                      maxLines: 2, // Allows title to wrap into two lines.
-                      overflow:
-                          TextOverflow.visible, // Ensure the full title shows.
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
                     ),
                   ),
                   const SizedBox(width: 8),
-                  // Rating section
                   RatingBar.builder(
                     initialRating: widget.detailModel.rating,
                     minRating: 1,
@@ -126,85 +125,27 @@ class ItemDetailPageState extends State<ItemDetailPage> {
                 ],
               ),
             ),
+
             const SizedBox(height: 16),
-            // Location, Category, and Season section
+
+            // Location, Category, and Season Section
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Row(
-                    children: [
-                      const Icon(
-                        Icons.location_on,
-                        size: 22,
-                        color: Colors.red,
-                      ),
-                      const SizedBox(width: 8),
-                      Flexible(
-                        child: Text(
-                          widget.detailModel.location,
-                          style: TextStyles(context).detailViewCategory,
-                          overflow: TextOverflow.ellipsis, // Prevents overflow
-                        ),
-                      ),
-                    ],
-                  ),
+                  buildLocationRow(),
                   const SizedBox(height: 8),
-                  Row(
-                    children: [
-                      const Icon(
-                        Icons.category,
-                        size: 22,
-                        color: Color.fromARGB(255, 117, 117, 117),
-                      ),
-                      const SizedBox(width: 8),
-                      Flexible(
-                        child: Text(
-                          'Category: ${widget.detailModel.category}',
-                          style: TextStyles(context).detailViewCategory,
-                          overflow: TextOverflow.ellipsis, // Prevents overflow
-                        ),
-                      ),
-                    ],
-                  ),
+                  buildCategoryRow(),
                   const SizedBox(height: 8),
+                  buildSeasonRow(),
                 ],
               ),
             ),
-            const SizedBox(height: 8),
-            Padding(
-              padding: const EdgeInsets.only(left: 12.0),
-              child: Container(
-                decoration: BoxDecoration(
-                  color: Colors.blueAccent.shade400,
-                  borderRadius: BorderRadius.circular(20.0),
-                ),
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Icon(
-                      Icons.calendar_today,
-                      size: 16.0,
-                      color: Colors.white,
-                    ),
-                    const SizedBox(width: 6.0),
-                    Text(
-                      'Best Season: ${widget.detailModel.season}',
-                      style: TextStyles(context)
-                          .detailViewCategory
-                          .copyWith(color: Colors.white),
-                    ),
-                  ],
-                ),
-              ),
-            ),
 
-            // Description section
+            // Description Section
             const Padding(
-              padding: EdgeInsetsDirectional.only(start: 8.0, bottom: 8.0),
+              padding: EdgeInsets.only(left: 16.0, top: 16.0),
               child: TitleText(titleText: "Description"),
             ),
             Padding(
@@ -212,14 +153,14 @@ class ItemDetailPageState extends State<ItemDetailPage> {
               child: Text(
                 widget.detailModel.description,
                 style: TextStyles(context).detailViewDescriptionText,
-                overflow: TextOverflow.ellipsis, // Prevents overflow
               ),
             ),
+
             const SizedBox(height: 16),
 
-            // Suggestion note section
+            // Suggestions Section
             const Padding(
-              padding: EdgeInsetsDirectional.only(start: 8.0, bottom: 8.0),
+              padding: EdgeInsets.only(left: 16.0, bottom: 8.0),
               child: TitleText(titleText: "Suggestions"),
             ),
             Padding(
@@ -227,12 +168,12 @@ class ItemDetailPageState extends State<ItemDetailPage> {
               child: Text(
                 widget.detailModel.suggestionNote,
                 style: TextStyles(context).detailViewDescriptionText,
-                overflow: TextOverflow.ellipsis, // Prevents overflow
               ),
             ),
+
             const SizedBox(height: 24),
 
-            // Open map button
+            // Open Map Button
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 14.0),
               child: SizedBox(
@@ -245,16 +186,12 @@ class ItemDetailPageState extends State<ItemDetailPage> {
                       borderRadius: BorderRadius.circular(15.0),
                     ),
                   ),
-                  onPressed: () {
-                    onViewMapClick();
-                  },
+                  onPressed: onViewMapClick,
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const Icon(
-                        Icons.map,
-                        color: Colors.white,
-                      ),
+                      const Icon(Icons.map, color: Colors.white),
+                      const SizedBox(width: 8),
                       Text(
                         ' View in map',
                         style: TextStyles(context).buttonText,
@@ -264,6 +201,7 @@ class ItemDetailPageState extends State<ItemDetailPage> {
                 ),
               ),
             ),
+
             const SizedBox(height: 24),
           ],
         ),
@@ -271,5 +209,63 @@ class ItemDetailPageState extends State<ItemDetailPage> {
     );
   }
 
-  void onViewMapClick() {}
+  Widget buildLocationRow() {
+    return Row(
+      children: [
+        const Icon(Icons.location_on, size: 22, color: Colors.red),
+        const SizedBox(width: 8),
+        Flexible(
+          child: Text(
+            widget.detailModel.location,
+            style: TextStyles(context).detailViewCategory,
+            overflow: TextOverflow.ellipsis,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget buildCategoryRow() {
+    return Row(
+      children: [
+        const Icon(Icons.category,
+            size: 22, color: Color.fromARGB(255, 117, 117, 117)),
+        const SizedBox(width: 8),
+        Flexible(
+          child: Text(
+            'Category: ${widget.detailModel.category}',
+            style: TextStyles(context).detailViewCategory,
+            overflow: TextOverflow.ellipsis,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget buildSeasonRow() {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.blueAccent.shade400,
+        borderRadius: BorderRadius.circular(20.0),
+      ),
+      padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const Icon(Icons.calendar_today, size: 16.0, color: Colors.white),
+          const SizedBox(width: 6.0),
+          Text(
+            'Best Season: ${widget.detailModel.season}',
+            style: TextStyles(context)
+                .detailViewCategory
+                .copyWith(color: Colors.white),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void onViewMapClick() {
+    // Implement the action to view the map
+  }
 }
