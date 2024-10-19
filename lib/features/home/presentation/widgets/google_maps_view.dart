@@ -32,7 +32,7 @@ class _MapScreenState extends State<MapScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Map Example')),
+      appBar: AppBar(title: const Text('Map View')),
       body: GoogleMap(
         onMapCreated: (GoogleMapController controller) {
           mapController = controller;
