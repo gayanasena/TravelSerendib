@@ -146,7 +146,7 @@ class _LoginScreenState extends State<LoginScreen> {
       {required String emailAddress, required String password}) async {
     String message = "";
     try {
-      final credintials = await FirebaseAuth.instance
+       await FirebaseAuth.instance
           .signInWithEmailAndPassword(email: emailAddress, password: password);
       message = "Login successful!";
 

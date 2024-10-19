@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:travelapp/features/auth/presentation/pages/regsiter_screen.dart';
 import 'package:travelapp/features/auth/presentation/pages/welcome_screen.dart';
-import 'package:travelapp/features/home/data/model/grid_view_model.dart';
+import 'package:travelapp/features/home/data/model/detail_model.dart';
 import 'package:travelapp/features/home/presentation/pages/event_calander_view.dart';
 import 'package:travelapp/features/home/presentation/pages/home_screen.dart';
 import 'package:travelapp/features/home/presentation/pages/item_detail_view.dart';
@@ -54,17 +54,26 @@ class Router {
         var args =
             settings.arguments != null ? settings.arguments as String : "";
 
-        return MaterialPageRoute(
-            builder: (_) => ItemGridView(gridViewType: args));
+        return MaterialPageRoute(builder: (_) => ItemGridView(gridType: args));
 
       case ScreenRoutes.toItemDetailScreen:
         var args = settings.arguments != null
-            ? settings.arguments as GridViewModel
-            : GridViewModel(
-                id: 0, title: "No data", description: "", imageUrl: "");
+            ? settings.arguments as DetailModel
+            : DetailModel(
+                id: "",
+                title: "",
+                location: "",
+                locationCategory: "",
+                category: "",
+                season: "",
+                rating: 0.0,
+                imageUrls: [],
+                description: "",
+                suggestionNote: "",
+                isFavourite: false);
 
         return MaterialPageRoute(
-            builder: (_) => ItemDetailPage(gridViewModel: args));
+            builder: (_) => ItemDetailPage(detailModel: args));
 
       case ScreenRoutes.toRegisterScreen:
         return MaterialPageRoute(builder: (_) => const RegisterScreen());

@@ -3,8 +3,9 @@ import 'package:flutter/material.dart';
 class CustomSearchBar extends StatefulWidget {
   final TextEditingController controller;
   final Function(String)? onChanged;
+  final List<String> availableFilters;
 
-  const CustomSearchBar({super.key, required this.controller, this.onChanged});
+  const CustomSearchBar({super.key, required this.controller, this.onChanged, required this.availableFilters});
 
   @override
   CustomSearchBarState createState() => CustomSearchBarState();
@@ -12,12 +13,6 @@ class CustomSearchBar extends StatefulWidget {
 
 class CustomSearchBarState extends State<CustomSearchBar> {
   List<String> selectedFilters = [];
-  final List<String> availableFilters = [
-    'Beach',
-    'Mountain',
-    'City',
-    'Historical'
-  ];
 
   void showFilterPopup(BuildContext context) async {
     final List<String> newFilters = await showDialog(
@@ -25,7 +20,7 @@ class CustomSearchBarState extends State<CustomSearchBar> {
       builder: (BuildContext context) {
         return FilterDialog(
             selectedFilters: selectedFilters,
-            availableFilters: availableFilters);
+            availableFilters: widget.availableFilters);
       },
     );
 
@@ -85,12 +80,10 @@ class CustomSearchBarState extends State<CustomSearchBar> {
               children: [
                 ...selectedFilters.map((filter) => Chip(
                       label: Text(filter),
-                      backgroundColor:
-                          Colors.grey[300], // Gray color without a border
+                      backgroundColor: Colors.grey[300],
                       shape: RoundedRectangleBorder(
                         side: BorderSide.none,
-                        borderRadius:
-                            BorderRadius.circular(20.0), // Fully rounded
+                        borderRadius: BorderRadius.circular(20.0),
                       ),
                       onDeleted: () {
                         setState(() {
@@ -104,7 +97,7 @@ class CustomSearchBarState extends State<CustomSearchBar> {
                   backgroundColor: Colors.red,
                   shape: RoundedRectangleBorder(
                     side: BorderSide.none,
-                    borderRadius: BorderRadius.circular(20.0), // Fully rounded
+                    borderRadius: BorderRadius.circular(20.0),
                   ),
                   labelStyle: const TextStyle(color: Colors.white),
                 ),

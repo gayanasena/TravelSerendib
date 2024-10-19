@@ -33,8 +33,7 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   late FlutterSecureStorage secureStorage;
   late CustomLoadingCubit customLoadingCubit;
-  String userName = "User";
-  final String userImageUrl = 'https://picsum.photos/200/300';
+  late String userImageUrl = 'https://picsum.photos/200/300'; //Note - This default value is a placeholder for image.
 
   final CarouselSliderController _carouselController =
       CarouselSliderController();
@@ -94,6 +93,15 @@ class _HomeScreenState extends State<HomeScreen> {
     if (kDebugMode) {
       print("Clicked");
     }
+  }
+
+    void setCurrentUserData() async {
+    final imageUrl = await secureStorage.read(key: 'userImageUrl') ?? '';
+
+    // Update state only if necessary
+    setState(() {
+      userImageUrl = imageUrl;
+    });
   }
 
   @override

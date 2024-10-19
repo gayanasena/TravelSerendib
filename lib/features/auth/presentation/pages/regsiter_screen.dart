@@ -5,7 +5,7 @@ import 'package:travelapp/core/resources/text_styles.dart';
 import 'package:travelapp/features/common/widgets/outlined_custom_button.dart';
 import 'package:travelapp/features/common/widgets/outlined_text_box.dart';
 import 'package:travelapp/features/home/data/Services/firebase_services.dart';
-import 'package:travelapp/features/home/data/model/user_table_model.dart';
+import 'package:travelapp/features/home/data/model/user_model.dart';
 import 'package:travelapp/utils/assets.dart';
 
 class RegisterScreen extends StatefulWidget {

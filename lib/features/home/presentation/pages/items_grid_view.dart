@@ -2,53 +2,75 @@ import 'package:flutter/material.dart';
 import 'package:travelapp/core/resources/colors.dart';
 import 'package:travelapp/core/resources/dimens.dart';
 import 'package:travelapp/core/resources/text_styles.dart';
-import 'package:travelapp/features/home/data/model/grid_view_model.dart';
+import 'package:travelapp/features/home/data/Services/firebase_services.dart';
+import 'package:travelapp/features/home/data/model/detail_model.dart';
 import 'package:travelapp/features/home/presentation/widgets/search_bar.dart';
 import 'package:travelapp/routes/routes.dart';
 import 'package:travelapp/routes/routes_extension.dart';
 
 class ItemGridView extends StatefulWidget {
-  final String gridViewType;
+  final String gridType;
 
-  const ItemGridView({super.key, required this.gridViewType});
+  const ItemGridView({super.key, required this.gridType});
 
   @override
   ItemGridViewState createState() => ItemGridViewState();
 }
 
 class ItemGridViewState extends State<ItemGridView> {
+  late FirebaseServices firebaseServices;
   late TextEditingController searchBarTextEditingController;
-  final List<GridViewModel> lisGridItem = [
-    GridViewModel(
-      id: 1,
-      title: 'Beautiful Beach',
-      description: 'Relax by the ocean with beautiful views.',
-      imageUrl: 'https://picsum.photos/300/200?random=1',
-    ),
-    GridViewModel(
-      id: 2,
-      title: 'Mountain Adventure',
-      description: 'Explore stunning mountains and trails.',
-      imageUrl: 'https://picsum.photos/300/200?random=2',
-    ),
-    GridViewModel(
-      id: 3,
-      title: 'City Exploration',
-      description: 'Discover vibrant city life and culture.',
-      imageUrl: 'https://picsum.photos/300/200?random=3',
-    ),
-    GridViewModel(
-      id: 4,
-      title: 'Historical Sites',
-      description: 'Visit places of historical significance.',
-      imageUrl: 'https://picsum.photos/300/200?random=4',
-    ),
-  ];
+  List<DetailModel> lisDetailTableModel = [];
+  List<DetailModel> filteredList = [];
+  List<String> availableFilters = [];
 
   @override
   void initState() {
-    super.initState();
     searchBarTextEditingController = TextEditingController();
+    firebaseServices = FirebaseServices();
+    getListData();
+    super.initState();
+  }
+
+  void getListData() async {
+    String collectionName = "";
+    if (widget.gridType == 'Travel Destinations') {
+      collectionName = 'destinations';
+    } else {
+      collectionName = widget.gridType.toLowerCase();
+    }
+    lisDetailTableModel =
+        await firebaseServices.fetchAllData(collectionName: collectionName);
+
+    if (lisDetailTableModel.isNotEmpty) {
+      setState(() {
+        filteredList = lisDetailTableModel; // Initially, display all items.
+
+        // Extract unique categories for filters
+        availableFilters =
+            lisDetailTableModel.map((item) => item.category).toSet().toList();
+      });
+    }
+  }
+
+  // Filter function based on search text and category filter
+  void filterSearchResults(String query, {String? selectedFilter}) {
+    List<DetailModel> tempList = [];
+    if (query.isNotEmpty || selectedFilter != null) {
+      tempList = lisDetailTableModel.where((item) {
+        final matchesSearch =
+            item.title.toLowerCase().contains(query.toLowerCase());
+        final matchesCategory =
+            selectedFilter == null || item.category == selectedFilter;
+        return matchesSearch && matchesCategory;
+      }).toList();
+    } else {
+      tempList = lisDetailTableModel;
+    }
+
+    setState(() {
+      filteredList = tempList;
+    });
   }
 
   @override
@@ -66,7 +88,7 @@ class ItemGridViewState extends State<ItemGridView> {
           icon: const Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () => Navigator.of(context).pop(),
         ),
-        title: Text(widget.gridViewType, style: TextStyles(context).appBarText),
+        title: Text(widget.gridType, style: TextStyles(context).appBarText),
         elevation: 0,
       ),
       body: Container(
@@ -78,23 +100,18 @@ class ItemGridViewState extends State<ItemGridView> {
               CustomSearchBar(
                 controller: searchBarTextEditingController,
                 onChanged: (searchString) {
-                  // Implement search functionality if needed
+                  filterSearchResults(searchString);
                 },
+                availableFilters: availableFilters, // Pass dynamic filters here
               ),
               const SizedBox(
                 height: 8.0,
               ),
               Expanded(
-                child: GridView.builder(
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 1,
-                    childAspectRatio: 2.0,
-                    mainAxisSpacing: 8,
-                    crossAxisSpacing: 8,
-                  ),
-                  itemCount: lisGridItem.length,
+                child: ListView.builder(
+                  itemCount: filteredList.length,
                   itemBuilder: (context, index) {
-                    final item = lisGridItem[index];
+                    final item = filteredList[index];
                     return Card(
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12.0),
@@ -115,7 +132,7 @@ class ItemGridViewState extends State<ItemGridView> {
                                 topRight: Radius.circular(12.0),
                               ),
                               child: Image.network(
-                                item.imageUrl,
+                                item.imageUrls.first,
                                 height: 120,
                                 width: double.infinity,
                                 fit: BoxFit.cover,
@@ -132,6 +149,8 @@ class ItemGridViewState extends State<ItemGridView> {
                                       fontSize: 17.0,
                                       fontWeight: FontWeight.bold,
                                     ),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
                                   ),
                                   const SizedBox(height: 4.0),
                                   Text(
@@ -140,6 +159,8 @@ class ItemGridViewState extends State<ItemGridView> {
                                       fontSize: 15.0,
                                       color: Colors.grey.shade800,
                                     ),
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
                                   ),
                                 ],
                               ),

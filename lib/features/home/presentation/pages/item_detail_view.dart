@@ -1,21 +1,18 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:travelapp/core/resources/colors.dart';
 import 'package:travelapp/core/resources/text_styles.dart';
-
-import 'package:travelapp/features/home/data/model/grid_view_model.dart';
-import 'package:travelapp/features/home/data/model/item_detail_model.dart';
+import 'package:travelapp/features/home/data/model/detail_model.dart';
 import 'package:travelapp/features/home/presentation/widgets/detail_carousel_card.dart';
 import 'package:travelapp/features/home/presentation/widgets/title_text.dart';
 
 class ItemDetailPage extends StatefulWidget {
-  final GridViewModel gridViewModel;
+  final DetailModel detailModel;
 
   const ItemDetailPage({
     super.key,
-    required this.gridViewModel,
+    required this.detailModel,
   });
 
   @override
@@ -25,23 +22,6 @@ class ItemDetailPage extends StatefulWidget {
 class ItemDetailPageState extends State<ItemDetailPage> {
   bool isFavorite = false;
   double rating = 0.0;
-
-  DetailModel detailItem = DetailModel(
-    id: "1",
-    title: "Beautiful Beach",
-    location: "Malibu, California",
-    category: "Beach",
-    season: "Summer",
-    rating: 4.0,
-    imageUrls: [
-      "https://picsum.photos/300/200?random=1",
-      "https://picsum.photos/300/200?random=2"
-    ],
-    description:
-        "Relax by the ocean with beautiful views and soft sand.Relax by the ocean with beautiful views and soft sand.Relax by the ocean with beautiful views and soft sand.",
-    suggestionNote:
-        "Bring sunscreen and a beach umbrella.Relax by the ocean with beautiful views and soft sand.Relax by the ocean with beautiful views and soft sand.",
-  );
 
   void toggleFavorite() {
     setState(() {
@@ -58,7 +38,12 @@ class ItemDetailPageState extends State<ItemDetailPage> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: primaryColor,
-        title: Text(detailItem.title, style: TextStyles(context).appBarText),
+        title: Text(
+          widget.detailModel.title,
+          style: TextStyles(context).appBarText,
+          maxLines: 2, // Allows title to wrap into two lines.
+          overflow: TextOverflow.ellipsis, // Prevents overflow in the app bar.
+        ),
         iconTheme: const IconThemeData(color: Colors.white),
         actions: [
           IconButton(
@@ -88,7 +73,7 @@ class ItemDetailPageState extends State<ItemDetailPage> {
                 viewportFraction: 0.9,
                 onPageChanged: (index, reason) {},
               ),
-              items: detailItem.imageUrls.map((imageUrl) {
+              items: widget.detailModel.imageUrls.map((imageUrl) {
                 return Builder(
                   builder: (BuildContext context) {
                     return DetailCarouselCard(
@@ -103,18 +88,25 @@ class ItemDetailPageState extends State<ItemDetailPage> {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    detailItem.title,
-                    style: const TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
+                  // Wrap title in Expanded to allow flexible space
+                  Expanded(
+                    child: Text(
+                      widget.detailModel.title,
+                      style: const TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      maxLines: 2, // Allows title to wrap into two lines.
+                      overflow:
+                          TextOverflow.visible, // Ensure the full title shows.
                     ),
                   ),
-                  const SizedBox(height: 8),
+                  const SizedBox(width: 8),
+                  // Rating section
                   RatingBar.builder(
-                    initialRating: detailItem.rating,
+                    initialRating: widget.detailModel.rating,
                     minRating: 1,
                     direction: Axis.horizontal,
                     allowHalfRating: true,
@@ -135,7 +127,6 @@ class ItemDetailPageState extends State<ItemDetailPage> {
               ),
             ),
             const SizedBox(height: 16),
-
             // Location, Category, and Season section
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -150,9 +141,12 @@ class ItemDetailPageState extends State<ItemDetailPage> {
                         color: Colors.red,
                       ),
                       const SizedBox(width: 8),
-                      Text(
-                        detailItem.location,
-                        style: TextStyles(context).detailViewCategory,
+                      Flexible(
+                        child: Text(
+                          widget.detailModel.location,
+                          style: TextStyles(context).detailViewCategory,
+                          overflow: TextOverflow.ellipsis, // Prevents overflow
+                        ),
                       ),
                     ],
                   ),
@@ -165,9 +159,12 @@ class ItemDetailPageState extends State<ItemDetailPage> {
                         color: Color.fromARGB(255, 117, 117, 117),
                       ),
                       const SizedBox(width: 8),
-                      Text(
-                        'Category: ${detailItem.category}',
-                        style: TextStyles(context).detailViewCategory,
+                      Flexible(
+                        child: Text(
+                          'Category: ${widget.detailModel.category}',
+                          style: TextStyles(context).detailViewCategory,
+                          overflow: TextOverflow.ellipsis, // Prevents overflow
+                        ),
                       ),
                     ],
                   ),
@@ -180,9 +177,8 @@ class ItemDetailPageState extends State<ItemDetailPage> {
               padding: const EdgeInsets.only(left: 12.0),
               child: Container(
                 decoration: BoxDecoration(
-                  color: Colors.blueAccent.shade400, // Chip background color
-                  borderRadius:
-                      BorderRadius.circular(20.0), // Rounded edges for the chip
+                  color: Colors.blueAccent.shade400,
+                  borderRadius: BorderRadius.circular(20.0),
                 ),
                 padding:
                     const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
@@ -196,7 +192,7 @@ class ItemDetailPageState extends State<ItemDetailPage> {
                     ),
                     const SizedBox(width: 6.0),
                     Text(
-                      'Best Season: ${detailItem.season}',
+                      'Best Season: ${widget.detailModel.season}',
                       style: TextStyles(context)
                           .detailViewCategory
                           .copyWith(color: Colors.white),
@@ -214,8 +210,9 @@ class ItemDetailPageState extends State<ItemDetailPage> {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
               child: Text(
-                detailItem.description,
+                widget.detailModel.description,
                 style: TextStyles(context).detailViewDescriptionText,
+                overflow: TextOverflow.ellipsis, // Prevents overflow
               ),
             ),
             const SizedBox(height: 16),
@@ -228,8 +225,9 @@ class ItemDetailPageState extends State<ItemDetailPage> {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
               child: Text(
-                detailItem.suggestionNote,
+                widget.detailModel.suggestionNote,
                 style: TextStyles(context).detailViewDescriptionText,
+                overflow: TextOverflow.ellipsis, // Prevents overflow
               ),
             ),
             const SizedBox(height: 24),

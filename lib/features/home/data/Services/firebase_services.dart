@@ -1,7 +1,10 @@
+// ignore_for_file: avoid_print
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:travelapp/features/home/data/model/user_table_model.dart';
+import 'package:travelapp/features/home/data/model/detail_model.dart';
+import 'package:travelapp/features/home/data/model/user_model.dart';
 
 class FirebaseServices {
   late FlutterSecureStorage secureStorage;
@@ -84,5 +87,69 @@ class FirebaseServices {
     } catch (error) {
       print('Failed to save user data: $error');
     }
+  }
+
+  Future<void> uploadItemList(List<DetailModel> items, String path) async {
+    DatabaseReference ref =
+        FirebaseDatabase.instance.ref(path); // Firebase path to store items
+
+    // Convert the list of DetailTableModel items into a map
+    Map<String, Map<String, dynamic>> itemsMap = {
+      for (DetailModel item in items) item.id: item.toJson()
+    };
+
+    try {
+      // Upload the entire map to Firebase at the given path
+      await ref.set(itemsMap);
+      print('Items uploaded successfully');
+    } catch (error) {
+      print('Failed to upload items: $error');
+    }
+  }
+
+  Future<List<DetailModel>> fetchAllData(
+      {required String collectionName}) async {
+    DatabaseReference ref =
+        FirebaseDatabase.instance.ref().child(collectionName);
+
+    List<DetailModel> items = [];
+
+    try {
+      DatabaseEvent event = await ref.once();
+
+      if (event.snapshot.value != null) {
+        if (event.snapshot.value is List) {
+          // Case when the data is a list (array-like structure)
+          List<dynamic> data = event.snapshot.value as List<dynamic>;
+
+          // Convert data to a list of DetailTableModel instances, skipping nulls
+          items = data
+              .where((item) => item != null) // Skip null values
+              .map((item) {
+            Map<String, dynamic> itemData = Map<String, dynamic>.from(item);
+            return DetailModel.fromJson(itemData);
+          }).toList();
+        } else if (event.snapshot.value is Map) {
+          // Case when the data is a map (key-value structure)
+          Map<dynamic, dynamic> data =
+              event.snapshot.value as Map<dynamic, dynamic>;
+
+          // Convert data to a list of DetailTableModel instances
+          items = data.entries.map((entry) {
+            Map<String, dynamic> itemData =
+                Map<String, dynamic>.from(entry.value);
+            return DetailModel.fromJson(itemData);
+          }).toList();
+        } else {
+          print('Unknown data format');
+        }
+      } else {
+        print('No data available');
+      }
+    } catch (error) {
+      print('Failed to fetch data: $error');
+    }
+
+    return items; // Return the list of DetailTableModel
   }
 }
