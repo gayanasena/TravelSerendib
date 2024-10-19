@@ -1,9 +1,32 @@
+// ignore_for_file: library_private_types_in_public_api
+
 import 'package:flutter/material.dart';
 import 'package:travelapp/core/resources/colors.dart';
 import 'package:travelapp/core/resources/text_styles.dart';
+import 'package:travelapp/features/home/data/Services/firebase_services.dart';
+import 'package:travelapp/features/home/data/model/taxi_booking_model.dart';
+import 'package:travelapp/routes/routes_extension.dart';
 
-class BookATaxiView extends StatelessWidget {
+class BookATaxiView extends StatefulWidget {
   const BookATaxiView({super.key});
+
+  @override
+  _BookATaxiViewState createState() => _BookATaxiViewState();
+}
+
+class _BookATaxiViewState extends State<BookATaxiView> {
+  final TextEditingController _pickupController = TextEditingController();
+  final TextEditingController _dropOffController = TextEditingController();
+
+  late FirebaseServices firebaseServices;
+
+  String? _selectedRideType;
+
+  @override
+  void initState() {
+    firebaseServices = FirebaseServices();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -33,6 +56,7 @@ class BookATaxiView extends StatelessWidget {
               ),
               const SizedBox(height: 8),
               TextField(
+                controller: _pickupController,
                 decoration: InputDecoration(
                   prefixIcon:
                       const Icon(Icons.location_on, color: primaryColor),
@@ -51,6 +75,7 @@ class BookATaxiView extends StatelessWidget {
               ),
               const SizedBox(height: 8),
               TextField(
+                controller: _dropOffController,
                 decoration: InputDecoration(
                   prefixIcon: const Icon(Icons.location_on_outlined,
                       color: primaryColor),
@@ -94,7 +119,7 @@ class BookATaxiView extends StatelessWidget {
                     backgroundColor: primaryColor,
                   ),
                   onPressed: () {
-                    // Booking confirmation logic
+                    _confirmBooking();
                   },
                   child: const Text(
                     "Confirm Booking",
@@ -111,38 +136,84 @@ class BookATaxiView extends StatelessWidget {
 
   // Ride Option Widget
   Widget _rideOption(String type, String seats, String assetPath) {
-    return Padding(
-      padding: const EdgeInsets.only(right: 16),
-      child: Container(
-        height: 150,
-        width: 150,
-        decoration: BoxDecoration(
-          color: Colors.grey.shade100,
-          borderRadius: BorderRadius.circular(20),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.grey.shade200,
-              blurRadius: 6,
-              offset: const Offset(0, 4),
-            ),
-          ],
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Image.asset(assetPath, height: 60), // Replace with actual asset
-            const SizedBox(height: 10),
-            Text(
-              type,
-              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-            ),
-            Text(
-              seats,
-              style: const TextStyle(color: Colors.grey),
-            ),
-          ],
+    return GestureDetector(
+      onTap: () {
+        setState(() {
+          _selectedRideType = type;
+        });
+      },
+      child: Padding(
+        padding: const EdgeInsets.only(right: 16),
+        child: Container(
+          height: 150,
+          width: 150,
+          decoration: BoxDecoration(
+            color: _selectedRideType == type
+                ? Colors.blue.shade100
+                : Colors.grey.shade100,
+            borderRadius: BorderRadius.circular(20),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.grey.shade200,
+                blurRadius: 6,
+                offset: const Offset(0, 4),
+              ),
+            ],
+          ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Image.asset(assetPath, height: 60), // Replace with actual asset
+              const SizedBox(height: 10),
+              Text(
+                type,
+                style:
+                    const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+              ),
+              Text(
+                seats,
+                style: const TextStyle(color: Colors.grey),
+              ),
+            ],
+          ),
         ),
       ),
     );
+  }
+
+  // Confirm Booking and send data to Firebase
+  void _confirmBooking() {
+    String pickupLocation = _pickupController.text;
+    String dropOffLocation = _dropOffController.text;
+
+    if (pickupLocation.isEmpty ||
+        dropOffLocation.isEmpty ||
+        _selectedRideType == null) {
+      // Show error message if any field is empty
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+            content: Text("Please fill all fields and select a ride type")),
+      );
+      return;
+    }
+
+    // Prepare data to be sent to Firebase
+    TaxiBookingModel bookingData = TaxiBookingModel(
+        userId: '',
+        pickupLocation: pickupLocation,
+        dropLocation: dropOffLocation,
+        rideType: _selectedRideType ?? 'Standard',
+        dateTime: DateTime.now().toString());
+
+    // Send data to Firebase
+    firebaseServices.saveBookingData(bookingModel: bookingData);
+
+    // Show confirmation
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+          content: Text("Booking Confirmed!"), backgroundColor: Colors.green),
+    );
+
+    context.popScreen();
   }
 }
