@@ -110,6 +110,24 @@ class FirebaseServices {
     }
   }
 
+  void toggleIsFavourite(
+      {required bool isFavourite,
+      required DetailModel detailModel,
+      required String collection}) async {
+    try {
+      DatabaseReference destinationRef = FirebaseDatabase.instance.ref(
+          '$collection/${detailModel.id}'); 
+
+      // Update the isFavourite field in Firebase
+      await destinationRef.update({
+        'isFavourite': isFavourite,
+      });
+      print('Successfully updated isFavourite field.');
+    } catch (e) {
+      print('Error updating isFavourite field: $e');
+    }
+  }
+
   Future<void> uploadItemList(List<DetailModel> items, String path) async {
     DatabaseReference ref =
         FirebaseDatabase.instance.ref(path); // Firebase path to store items

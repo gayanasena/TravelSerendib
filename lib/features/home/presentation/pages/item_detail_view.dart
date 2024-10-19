@@ -4,6 +4,7 @@ import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:travelapp/core/resources/colors.dart';
 import 'package:travelapp/core/resources/dimens.dart';
 import 'package:travelapp/core/resources/text_styles.dart';
+import 'package:travelapp/features/home/data/Services/firebase_services.dart';
 import 'package:travelapp/features/home/data/model/detail_model.dart';
 import 'package:travelapp/features/home/presentation/widgets/detail_carousel_card.dart';
 import 'package:travelapp/features/home/presentation/widgets/google_maps_view.dart';
@@ -23,12 +24,14 @@ class ItemDetailPage extends StatefulWidget {
 }
 
 class ItemDetailPageState extends State<ItemDetailPage> {
+  late FirebaseServices firebaseServices;
   bool isFavorite = false;
   double rating = 0.0;
   late YoutubePlayerController _controllerVideoPlayer;
 
   @override
   void initState() {
+    firebaseServices = FirebaseServices();
     _controllerVideoPlayer = YoutubePlayerController(
       initialVideoId: widget.detailModel.videoUrl ?? '',
       flags: const YoutubePlayerFlags(
@@ -36,12 +39,19 @@ class ItemDetailPageState extends State<ItemDetailPage> {
         mute: true,
       ),
     );
+    isFavorite = widget.detailModel.isFavourite;
     super.initState();
   }
 
   void toggleFavorite() {
     setState(() {
       isFavorite = !isFavorite;
+      if (widget.detailModel.mapUrl != null) {
+        firebaseServices.toggleIsFavourite(
+            isFavourite: isFavorite,
+            detailModel: widget.detailModel,
+            collection: 'destinations');
+      }
     });
   }
 
