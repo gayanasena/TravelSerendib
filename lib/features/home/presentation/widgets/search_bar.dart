@@ -2,10 +2,17 @@ import 'package:flutter/material.dart';
 
 class CustomSearchBar extends StatefulWidget {
   final TextEditingController controller;
-  final Function(String)? onChanged;
+  final Function(String)? onChanged; // For search bar text changes
   final List<String> availableFilters;
+  final Function(List<String>) onFiltersChanged; // Callback for filters
 
-  const CustomSearchBar({super.key, required this.controller, this.onChanged, required this.availableFilters});
+  const CustomSearchBar({
+    super.key,
+    required this.controller,
+    this.onChanged,
+    required this.availableFilters,
+    required this.onFiltersChanged,
+  });
 
   @override
   CustomSearchBarState createState() => CustomSearchBarState();
@@ -15,24 +22,31 @@ class CustomSearchBarState extends State<CustomSearchBar> {
   List<String> selectedFilters = [];
 
   void showFilterPopup(BuildContext context) async {
-    final List<String> newFilters = await showDialog(
+    final List<String>? newFilters = await showDialog(
       context: context,
       builder: (BuildContext context) {
         return FilterDialog(
-            selectedFilters: selectedFilters,
-            availableFilters: widget.availableFilters);
+          selectedFilters: selectedFilters,
+          availableFilters: widget.availableFilters,
+        );
       },
     );
 
-    setState(() {
-      selectedFilters = newFilters;
-    });
+    if (newFilters != null) {
+      setState(() {
+        selectedFilters = newFilters;
+      });
+      // Notify parent widget of the new selected filters
+      widget.onFiltersChanged(selectedFilters);
+    }
   }
 
   void clearFilters() {
     setState(() {
       selectedFilters.clear();
     });
+    // Notify parent widget of cleared filters
+    widget.onFiltersChanged(selectedFilters);
   }
 
   @override
@@ -55,7 +69,7 @@ class CustomSearchBarState extends State<CustomSearchBar> {
             ),
             child: TextField(
               controller: widget.controller,
-              onChanged: widget.onChanged,
+              onChanged: widget.onChanged, // Search text changed event
               decoration: InputDecoration(
                 prefixIcon: const Icon(Icons.search, color: Colors.grey),
                 suffixIcon: IconButton(
@@ -89,6 +103,8 @@ class CustomSearchBarState extends State<CustomSearchBar> {
                         setState(() {
                           selectedFilters.remove(filter);
                         });
+                        widget.onFiltersChanged(
+                            selectedFilters); // Update parent on filter deletion
                       },
                     )),
                 ActionChip(

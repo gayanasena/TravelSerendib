@@ -23,6 +23,8 @@ class ItemGridViewState extends State<ItemGridView> {
   List<DetailModel> lisDetailModel = [];
   List<DetailModel> filteredList = [];
   List<String> availableFilters = [];
+  String currentSearchStr = "";
+  List<String> lisCurrentSelectedFilters = [];
 
   @override
   void initState() {
@@ -54,17 +56,23 @@ class ItemGridViewState extends State<ItemGridView> {
   }
 
   // Filter function based on search text and category filter
-  void filterSearchResults(String query, {String? selectedFilter}) {
+  void filterSearchResults(String query, {List<String>? selectedFilters}) {
     List<DetailModel> tempList = [];
-    if (query.isNotEmpty || selectedFilter != null) {
+
+    // Check if there is a query or selected filters
+    if (query.isNotEmpty ||
+        (selectedFilters != null && selectedFilters.isNotEmpty)) {
       tempList = lisDetailModel.where((item) {
         final matchesSearch =
             item.title.toLowerCase().contains(query.toLowerCase());
-        final matchesCategory =
-            selectedFilter == null || item.category == selectedFilter;
+        final matchesCategory = selectedFilters == null ||
+            selectedFilters.isEmpty ||
+            selectedFilters.contains(item.category);
+
         return matchesSearch && matchesCategory;
       }).toList();
     } else {
+      // If no filters or search query, return the full list
       tempList = lisDetailModel;
     }
 
@@ -113,9 +121,15 @@ class ItemGridViewState extends State<ItemGridView> {
               CustomSearchBar(
                 controller: searchBarTextEditingController,
                 onChanged: (searchString) {
-                  filterSearchResults(searchString);
+                  currentSearchStr = searchString;
+                  filterSearchResults(searchString,
+                      selectedFilters: lisCurrentSelectedFilters);
                 },
-                availableFilters: availableFilters, // Pass dynamic filters here
+                availableFilters: availableFilters,
+                onFiltersChanged: (selectedFilters) {
+                  filterSearchResults(currentSearchStr,
+                      selectedFilters: selectedFilters);
+                },
               ),
               const SizedBox(
                 height: 16.0,

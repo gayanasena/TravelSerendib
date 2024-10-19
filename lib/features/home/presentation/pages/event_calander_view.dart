@@ -23,6 +23,8 @@ class EventCalendarViewState extends State<EventCalendarView> {
   List<DetailModel> filteredEvents = [];
   final ScrollController _scrollController = ScrollController();
   String selectedMonth = "";
+  String currentSearchStr = "";
+  List<String> lisCurrentSelectedFilters = [];
   List<String> lisMonths = [
     "January",
     "February",
@@ -42,7 +44,6 @@ class EventCalendarViewState extends State<EventCalendarView> {
   void initState() {
     firebaseServices = FirebaseServices();
     getListData();
-    _searchController.addListener(_filterEvents);
     super.initState();
   }
 
@@ -58,22 +59,34 @@ class EventCalendarViewState extends State<EventCalendarView> {
   }
 
   int findMonthIndex(String month) {
-    // List of months in the year
-
     // Find the index of the month in the list, return -1 if not found
     int monthIndex = lisMonths.indexOf(month);
 
-    // Return the index, adding 1 because months are 1-based (1 for January, 2 for February, etc.)
     return monthIndex != -1 ? monthIndex + 1 : -1;
   }
 
-  void _filterEvents() {
-    String searchTerm = _searchController.text.toLowerCase();
-    setState(() {
-      filteredEvents = lisDetailModel.where((event) {
-        return event.title.toLowerCase().contains(searchTerm) ||
-            event.season.toLowerCase().contains(searchTerm);
+  void filterSearchResults(String query, {List<String>? selectedFilters}) {
+    List<DetailModel> tempList = [];
+
+    // Check if there is a query or selected filters
+    if (query.isNotEmpty ||
+        (selectedFilters != null && selectedFilters.isNotEmpty)) {
+      tempList = lisDetailModel.where((item) {
+        final matchesSearch =
+            item.title.toLowerCase().contains(query.toLowerCase());
+        final matchesCategory = selectedFilters == null ||
+            selectedFilters.isEmpty ||
+            selectedFilters.contains(item.season);
+
+        return matchesSearch && matchesCategory;
       }).toList();
+    } else {
+      // If no filters or search query, return the full list
+      tempList = lisDetailModel;
+    }
+
+    setState(() {
+      filteredEvents = tempList;
     });
   }
 
@@ -122,7 +135,16 @@ class EventCalendarViewState extends State<EventCalendarView> {
             // Search Bar
             CustomSearchBar(
               controller: _searchController,
+              onChanged: (searchString) {
+                currentSearchStr = searchString;
+                filterSearchResults(searchString,
+                    selectedFilters: lisCurrentSelectedFilters);
+              },
               availableFilters: lisMonths,
+              onFiltersChanged: (selectedFilters) {
+                filterSearchResults(currentSearchStr,
+                    selectedFilters: selectedFilters);
+              },
             ),
             const SizedBox(height: 20),
 
