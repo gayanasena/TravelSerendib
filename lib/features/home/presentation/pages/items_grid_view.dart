@@ -20,7 +20,7 @@ class ItemGridView extends StatefulWidget {
 class ItemGridViewState extends State<ItemGridView> {
   late FirebaseServices firebaseServices;
   late TextEditingController searchBarTextEditingController;
-  List<DetailModel> lisDetailTableModel = [];
+  List<DetailModel> lisDetailModel = [];
   List<DetailModel> filteredList = [];
   List<String> availableFilters = [];
 
@@ -39,16 +39,16 @@ class ItemGridViewState extends State<ItemGridView> {
     } else {
       collectionName = widget.gridType.toLowerCase();
     }
-    lisDetailTableModel =
+    lisDetailModel =
         await firebaseServices.fetchAllData(collectionName: collectionName);
 
-    if (lisDetailTableModel.isNotEmpty) {
+    if (lisDetailModel.isNotEmpty) {
       setState(() {
-        filteredList = lisDetailTableModel; // Initially, display all items.
+        filteredList = lisDetailModel; // Initially, display all items.
 
         // Extract unique categories for filters
         availableFilters =
-            lisDetailTableModel.map((item) => item.category).toSet().toList();
+            lisDetailModel.map((item) => item.category).toSet().toList();
       });
     }
   }
@@ -57,7 +57,7 @@ class ItemGridViewState extends State<ItemGridView> {
   void filterSearchResults(String query, {String? selectedFilter}) {
     List<DetailModel> tempList = [];
     if (query.isNotEmpty || selectedFilter != null) {
-      tempList = lisDetailTableModel.where((item) {
+      tempList = lisDetailModel.where((item) {
         final matchesSearch =
             item.title.toLowerCase().contains(query.toLowerCase());
         final matchesCategory =
@@ -65,7 +65,7 @@ class ItemGridViewState extends State<ItemGridView> {
         return matchesSearch && matchesCategory;
       }).toList();
     } else {
-      tempList = lisDetailTableModel;
+      tempList = lisDetailModel;
     }
 
     setState(() {
@@ -88,6 +88,16 @@ class ItemGridViewState extends State<ItemGridView> {
           icon: const Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () => Navigator.of(context).pop(),
         ),
+        actions: const [
+          // GestureDetector(
+          //   child: const Text("Upload"),
+          //   onTap: () {
+          //     List<DetailModel> model = [];
+
+          //     firebaseServices.uploadItemList(model, 'destinations');
+          //   },
+          // )
+        ],
         title: Text(widget.gridType, style: TextStyles(context).appBarText),
         elevation: 0,
       ),
@@ -97,6 +107,9 @@ class ItemGridViewState extends State<ItemGridView> {
           padding: const EdgeInsets.all(Dimens.defaultPadding),
           child: Column(
             children: [
+              const SizedBox(
+                height: 8.0,
+              ),
               CustomSearchBar(
                 controller: searchBarTextEditingController,
                 onChanged: (searchString) {
@@ -105,7 +118,7 @@ class ItemGridViewState extends State<ItemGridView> {
                 availableFilters: availableFilters, // Pass dynamic filters here
               ),
               const SizedBox(
-                height: 8.0,
+                height: 16.0,
               ),
               Expanded(
                 child: ListView.builder(
