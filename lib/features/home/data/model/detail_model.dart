@@ -1,3 +1,5 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
+
 class DetailModel {
   final String id;
   final String title;
@@ -10,6 +12,8 @@ class DetailModel {
   final String description;
   final String suggestionNote;
   final bool isFavourite;
+  final String? mapUrl;
+  final String? videoUrl;
 
   DetailModel({
     required this.id,
@@ -23,9 +27,11 @@ class DetailModel {
     required this.description,
     required this.suggestionNote,
     required this.isFavourite,
+    this.mapUrl,
+    this.videoUrl,
   });
 
-  // Factory method to create a DetailTableModel from JSON
+  // Factory method to create a DetailModel from JSON
   factory DetailModel.fromJson(Map<String, dynamic> json) {
     return DetailModel(
       id: json['id'] as String,
@@ -40,6 +46,9 @@ class DetailModel {
       description: json['description'] as String,
       suggestionNote: json['suggestionNote'] as String,
       isFavourite: json['isFavourite'] as bool,
+      mapUrl: json['mapUrl'] as String?, // Ensure null safety
+      videoUrl:
+          json['videoUrl'] as String?, // Corrected from mapUrl to videoUrl
     );
   }
 
@@ -57,6 +66,8 @@ class DetailModel {
       'description': description,
       'suggestionNote': suggestionNote,
       'isFavourite': isFavourite,
+      'mapUrl': mapUrl,
+      'videoUrl': videoUrl,
     };
   }
 }

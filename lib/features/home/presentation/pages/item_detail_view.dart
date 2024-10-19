@@ -2,9 +2,11 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:travelapp/core/resources/colors.dart';
+import 'package:travelapp/core/resources/dimens.dart';
 import 'package:travelapp/core/resources/text_styles.dart';
 import 'package:travelapp/features/home/data/model/detail_model.dart';
 import 'package:travelapp/features/home/presentation/widgets/detail_carousel_card.dart';
+import 'package:travelapp/features/home/presentation/widgets/google_maps_view.dart';
 import 'package:travelapp/features/home/presentation/widgets/title_text.dart';
 
 class ItemDetailPage extends StatefulWidget {
@@ -29,8 +31,31 @@ class ItemDetailPageState extends State<ItemDetailPage> {
     });
   }
 
-  void openMap() {
-    // Implement navigation to map screen or external map application here
+  void openMap({String? mapUrl}) {
+    double lat = 0.0;
+    double long = 0.0;
+
+    if (mapUrl != null) {
+      if (mapUrl.isNotEmpty) {
+        final regex = RegExp(r'@(-?\d+\.\d+),(-?\d+\.\d+)');
+        final match = regex.firstMatch(mapUrl);
+        if (match != null) {
+          final latitude = double.parse(match.group(1)!);
+          final longitude = double.parse(match.group(2)!);
+
+          lat = latitude;
+          long = longitude;
+        } else {
+          lat = 37.7749;
+          long = -122.4194;
+        }
+        showMapBottomSheet(
+            long: long,
+            lat: lat,
+            title: widget.detailModel.title,
+            description: '');
+      }
+    }
   }
 
   @override
@@ -49,7 +74,7 @@ class ItemDetailPageState extends State<ItemDetailPage> {
           IconButton(
             icon: Icon(
               isFavorite ? Icons.favorite : Icons.favorite_border,
-              color: isFavorite ? Colors.red : Colors.grey,
+              color: isFavorite ? Colors.red : Colors.white,
             ),
             onPressed: toggleFavorite,
           ),
@@ -145,7 +170,7 @@ class ItemDetailPageState extends State<ItemDetailPage> {
 
             // Description Section
             const Padding(
-              padding: EdgeInsets.only(left: 16.0, top: 16.0),
+              padding: EdgeInsets.only(left: 8.0, top: 8.0),
               child: TitleText(titleText: "Description"),
             ),
             Padding(
@@ -160,7 +185,7 @@ class ItemDetailPageState extends State<ItemDetailPage> {
 
             // Suggestions Section
             const Padding(
-              padding: EdgeInsets.only(left: 16.0, bottom: 8.0),
+              padding: EdgeInsets.only(left: 8.0, bottom: 8.0),
               child: TitleText(titleText: "Suggestions"),
             ),
             Padding(
@@ -174,33 +199,37 @@ class ItemDetailPageState extends State<ItemDetailPage> {
             const SizedBox(height: 24),
 
             // Open Map Button
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 14.0),
-              child: SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blueGrey,
-                    padding: const EdgeInsets.all(12.0),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(15.0),
-                    ),
-                  ),
-                  onPressed: onViewMapClick,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Icon(Icons.map, color: Colors.white),
-                      const SizedBox(width: 8),
-                      Text(
-                        ' View in map',
-                        style: TextStyles(context).buttonText,
+            (widget.detailModel.mapUrl != null)
+                ? Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 14.0),
+                    child: SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.blueGrey,
+                          padding: const EdgeInsets.all(12.0),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(15.0),
+                          ),
+                        ),
+                        onPressed: () {
+                          openMap(mapUrl: widget.detailModel.mapUrl);
+                        },
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Icon(Icons.map, color: Colors.white),
+                            const SizedBox(width: 8),
+                            Text(
+                              ' View in map',
+                              style: TextStyles(context).buttonText,
+                            ),
+                          ],
+                        ),
                       ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
+                    ),
+                  )
+                : Container(),
 
             const SizedBox(height: 24),
           ],
@@ -265,7 +294,35 @@ class ItemDetailPageState extends State<ItemDetailPage> {
     );
   }
 
-  void onViewMapClick() {
-    // Implement the action to view the map
+  showMapBottomSheet(
+      {required double long,
+      required double lat,
+      required String title,
+      required String description}) {
+    showModalBottomSheet(
+      clipBehavior: Clip.antiAlias,
+      context: context,
+      isDismissible: true,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(Dimens.defaultBottomSheetRadius),
+              topRight: Radius.circular(Dimens.defaultBottomSheetRadius))),
+      builder: (context) {
+        return Container(
+          constraints: BoxConstraints(
+            maxHeight: context.mQHeight * 0.8,
+          ),
+          child: Scaffold(
+            body: MapScreen(
+              description: description,
+              latitude: lat,
+              longitude: long,
+              title: title,
+            ),
+          ),
+        );
+      },
+    );
   }
 }
