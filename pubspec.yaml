@@ -54,6 +54,8 @@ dependencies:
   month_picker_dialog: ^5.1.3
   google_maps_flutter: ^2.9.0
   youtube_player_flutter: ^9.1.1
+  firebase_storage: ^12.3.3
+  image_picker: ^1.1.2
 
 dev_dependencies:
   flutter_test:

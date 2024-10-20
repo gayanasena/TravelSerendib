@@ -1,5 +1,7 @@
+import 'dart:io';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:travelapp/core/resources/colors.dart';
 import 'package:travelapp/core/resources/text_styles.dart';
 import 'package:travelapp/features/common/widgets/outlined_custom_button.dart';
@@ -23,8 +25,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
   late TextEditingController passwordTextEditingController;
   late TextEditingController countryTextEditingController;
   String uid = "";
+  File? _imageFile;
+  String? _uploadedImageUrl;
 
   final _formKey = GlobalKey<FormState>();
+  final ImagePicker _picker = ImagePicker();
 
   @override
   void initState() {
@@ -35,6 +40,16 @@ class _RegisterScreenState extends State<RegisterScreen> {
     passwordTextEditingController = TextEditingController();
     countryTextEditingController = TextEditingController();
     super.initState();
+  }
+
+  Future<void> _pickImage() async {
+    final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
+
+    if (pickedFile != null) {
+      setState(() {
+        _imageFile = File(pickedFile.path);
+      });
+    }
   }
 
   @override
@@ -76,6 +91,20 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           style: TextStyles(context).loginDescriptionText,
                         ),
                         const SizedBox(height: 20),
+                        GestureDetector(
+                          onTap: _pickImage,
+                          child: CircleAvatar(
+                            radius: 40,
+                            backgroundColor: Colors.grey[300],
+                            backgroundImage: _imageFile != null
+                                ? FileImage(_imageFile!)
+                                : null,
+                            child: _imageFile == null
+                                ? const Icon(Icons.add_a_photo)
+                                : null,
+                          ),
+                        ),
+                        const SizedBox(height: 10),
                         OutlinedTextBox(
                           labelText: "First Name",
                           controller: firstNameTextEditingController,
@@ -127,7 +156,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         const SizedBox(height: 20),
                         CustomOutlinedButton(
                           label: 'Sign Up',
-                          onPressed: () {
+                          onPressed: () async {
                             if (_formKey.currentState!.validate()) {
                               String email = emailTextEditingController.text;
                               String password =
@@ -170,6 +199,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
       if (cred.user != null) {
         uid = cred.user?.uid ?? "";
+
+        if (_imageFile != null) {
+          await firebaseServices.uploadImage(_imageFile!);
+        }
+        
         saveUserData(
             uid: uid,
             firstName: firstNameTextEditingController.text,
@@ -177,10 +211,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
             email: emailTextEditingController.text,
             country: countryTextEditingController.text,
             imageUrl:
-                'https://picsum.photos/300/200?random=5'); //TODO: change to set user image.
+                _uploadedImageUrl ?? 'https://picsum.photos/300/200?random=5');
       }
 
-      message = "Welcome! Your account has been successfully created. Please login";
+      message =
+          "Welcome! Your account has been successfully created. Please login";
       isSuccess = true;
     } on FirebaseAuthException catch (e) {
       if (e.code == 'weak-password') {
@@ -194,7 +229,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
       message = "An error occurred, please try again.";
     }
 
-    // Show SnackBar for success or error message
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(message),
@@ -202,11 +236,9 @@ class _RegisterScreenState extends State<RegisterScreen> {
       ),
     );
 
-    // Navigate if the registration was successful
     if (isSuccess) {
       Future.delayed(const Duration(seconds: 2), () {
-        Navigator.pop(
-            context); //TODO: Change to home screen with replacement route.
+        Navigator.pop(context); // Navigate to home screen
       });
     }
   }

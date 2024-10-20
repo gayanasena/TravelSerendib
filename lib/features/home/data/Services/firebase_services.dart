@@ -1,7 +1,10 @@
 // ignore_for_file: avoid_print
 
+import 'dart:io';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:travelapp/features/home/data/model/detail_model.dart';
 import 'package:travelapp/features/home/data/model/taxi_booking_model.dart';
@@ -125,6 +128,21 @@ class FirebaseServices {
       print('Successfully updated isFavourite field.');
     } catch (e) {
       print('Error updating isFavourite field: $e');
+    }
+  }
+
+  
+  Future<String?> uploadImage(File image) async {
+    try {
+      String fileName = '${DateTime.now().millisecondsSinceEpoch}.jpg';
+      Reference storageRef =
+          FirebaseStorage.instance.ref().child('user_images').child(fileName);
+
+      await storageRef.putFile(image);
+      String downloadUrl = await storageRef.getDownloadURL();
+      return downloadUrl;
+    } catch (e) {
+      return null;
     }
   }
 
