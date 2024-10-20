@@ -143,6 +143,8 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
 
                               secureStorage.write(
                                   key: "isLoggedIn", value: 'false');
+                              secureStorage.write(
+                                  key: "isGuestMode", value: 'true');
                             });
                           },
                         ),
