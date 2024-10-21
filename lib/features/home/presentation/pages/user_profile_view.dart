@@ -5,6 +5,7 @@ import 'package:travelapp/core/resources/colors.dart';
 import 'package:travelapp/core/resources/text_styles.dart';
 import 'package:travelapp/routes/routes.dart';
 import 'package:travelapp/routes/routes_extension.dart';
+import 'package:travelapp/utils/assets.dart';
 
 class UserProfileScreen extends StatefulWidget {
   const UserProfileScreen({
@@ -34,12 +35,19 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
     final username = await secureStorage.read(key: 'username') ?? '';
     final email = await secureStorage.read(key: 'userEmail') ?? '';
     final imageUrl = await secureStorage.read(key: 'userImageUrl') ?? '';
+    final isGuestMode = await secureStorage.read(key: 'isGuestMode');
 
     // Update state only if necessary
     setState(() {
-      userName = username;
-      userEmail = email;
-      profileImageUrl = imageUrl;
+      if (isGuestMode == 'true') {
+        userName = 'Guest';
+        userEmail = '';
+        profileImageUrl = '';
+      } else {
+        userName = username;
+        userEmail = email;
+        profileImageUrl = imageUrl;
+      }
     });
   }
 
@@ -82,7 +90,11 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
                       fit: BoxFit.cover,
                     ),
                   )
-                : Container(),
+                : CircleAvatar(
+                    radius: 45,
+                    backgroundImage:
+                        AssetImage(Assets(context).icSampleUserImage),
+                  ),
           ),
           const SizedBox(height: 16.0),
           Text(

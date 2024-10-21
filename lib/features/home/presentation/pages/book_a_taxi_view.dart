@@ -1,6 +1,7 @@
 // ignore_for_file: library_private_types_in_public_api
 
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:travelapp/core/resources/colors.dart';
 import 'package:travelapp/core/resources/text_styles.dart';
 import 'package:travelapp/features/home/data/Services/firebase_services.dart';
@@ -17,6 +18,8 @@ class BookATaxiView extends StatefulWidget {
 class _BookATaxiViewState extends State<BookATaxiView> {
   final TextEditingController _pickupController = TextEditingController();
   final TextEditingController _dropOffController = TextEditingController();
+  late FlutterSecureStorage secureStorage;
+  bool isGuestMode = false;
 
   late FirebaseServices firebaseServices;
 
@@ -25,7 +28,20 @@ class _BookATaxiViewState extends State<BookATaxiView> {
   @override
   void initState() {
     firebaseServices = FirebaseServices();
+    secureStorage = const FlutterSecureStorage();
     super.initState();
+  }
+
+  void getSecureStorageData() async {
+    var value = await secureStorage.read(key: 'isGuestMode');
+
+    setState(() {
+      if (value == 'true') {
+        isGuestMode = true;
+      } else {
+        isGuestMode = false;
+      }
+    });
   }
 
   @override
@@ -98,9 +114,10 @@ class _BookATaxiViewState extends State<BookATaxiView> {
                 child: ListView(
                   scrollDirection: Axis.horizontal,
                   children: [
-                    _rideOption("Standard", "4 seats", "assets/images/car.jpg"),
-                    _rideOption("SUV", "6 seats", "assets/images/car.jpg"),
-                    _rideOption("Luxury", "4 seats", "assets/images/car.jpg"),
+                    _rideOption("Tuk", "2 seats", "assets/images/tuk.png"),
+                    _rideOption("Flex", "3 seats", "assets/images/flex2.png"),
+                    _rideOption("Car", "3 seats", "assets/images/flex.png"),
+                    _rideOption("SUV", "5 seats", "assets/images/suv.png"),
                   ],
                 ),
               ),
@@ -109,23 +126,32 @@ class _BookATaxiViewState extends State<BookATaxiView> {
 
               // Confirm Booking Button
               Center(
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 80, vertical: 12),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    backgroundColor: primaryColor,
-                  ),
-                  onPressed: () {
-                    _confirmBooking();
-                  },
-                  child: const Text(
-                    "Confirm Booking",
-                    style: TextStyle(fontSize: 18, color: Colors.white),
-                  ),
-                ),
+                child: isGuestMode
+                    ? ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 80, vertical: 12),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          backgroundColor: primaryColor,
+                        ),
+                        onPressed: () {
+                          _confirmBooking();
+                        },
+                        child: const Text(
+                          "Confirm Booking",
+                          style: TextStyle(fontSize: 18, color: Colors.white),
+                        ),
+                      )
+                    : const Padding(
+                        padding: EdgeInsets.only(top: 8.0),
+                        child: Text(
+                          'Please login to make a booking',
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 16),
+                        ),
+                      ),
               ),
             ],
           ),
